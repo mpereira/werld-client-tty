@@ -4,7 +4,7 @@ LDFLAGS = -lncurses
 
 EXECUTABLE = werld_client
 SRC_DIR    = .
-SRC        = ${SRC_DIR}/werld_client.c
+SRC        = ${SRC_DIR}/main.c
 SRC_OBJECTS = ${SRC_DIR}/keyboard.o \
               ${SRC_DIR}/ui.o       \
               ${SRC_DIR}/movement.o \
