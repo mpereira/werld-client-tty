@@ -2,7 +2,6 @@
 #define WERLD_CLIENT_PLAYER_H
 
 #define MAX_NAME_SIZE 20
-#define MAX_SAY_SIZE 50
 
 #include <curses.h>
 
