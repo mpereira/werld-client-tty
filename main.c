@@ -41,9 +41,6 @@ int main(int argc, const char *argv[]) {
 
   werld_client_connect();
 
-  endwin();
-  werld_client_send_player(player);
-
   do {
     keyboard_event(getch());
   } while (true);
