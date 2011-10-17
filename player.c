@@ -7,6 +7,7 @@
 #include "movement.h"
 #include "player.h"
 #include "ui.h"
+#include "werld_client.h"
 
 void player_initialize(struct player *player,
                        const int id,
@@ -36,4 +37,5 @@ void player_move(struct player *player, enum movement movement) {
     break;
   }
   ui_draw_player(*player);
+  werld_client_send_player(player);
 }

@@ -25,7 +25,6 @@ void keyboard_event(int key) {
   case KEY_UP:
   case KEY_RIGHT:
     player_move(&player, movement_direction(key));
-    werld_client_send_player(player);
     break;
   default:
     break;
