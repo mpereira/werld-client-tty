@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <curses.h>
 
 #include "movement.h"
@@ -16,5 +17,7 @@ enum movement movement_direction(int key) {
   case 'l':
   case KEY_RIGHT:
     return(RIGHT);
+  default:
+    assert(false && "invalid movement");
   }
 }

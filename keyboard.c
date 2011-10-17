@@ -5,11 +5,13 @@
 #include "keyboard.h"
 #include "movement.h"
 #include "player.h"
+#include "werld_client.h"
 
 extern struct player player;
 
 void keyboard_event(int key) {
   if (key == 'q' || key == 'Q') {
+    werld_client_disconnect();
     endwin();
     exit(0);
   }
@@ -22,11 +24,8 @@ void keyboard_event(int key) {
   case KEY_DOWN:
   case KEY_UP:
   case KEY_RIGHT:
-    /*erase_cursor(cursor);*/
     player_move(&player, movement_direction(key));
-    /*draw_cursor(cursor);*/
-    break;
-  case KEY_SPACEBAR:
+    werld_client_send_player(player);
     break;
   default:
     break;

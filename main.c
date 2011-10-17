@@ -9,15 +9,10 @@
 #include "ui.h"
 #include "player.h"
 #include "keyboard.h"
+#include "werld_client.h"
 
 int main(int argc, const char *argv[]) {
-  char *name;
-  char buffer[MAX_NAME_SIZE];
-
-  if (!(name = malloc(MAX_NAME_SIZE))) {
-    fprintf(stderr, "%s\n", strerror(errno));
-    exit(errno);
-  }
+  char name[MAX_NAME_SIZE];
 
   initscr();
   raw();
@@ -28,8 +23,7 @@ int main(int argc, const char *argv[]) {
 
   printw("What's your name? ");
   refresh();
-  wgetnstr(stdscr, buffer, sizeof(buffer));
-  sscanf(buffer, "%s", name);
+  wgetnstr(stdscr, name, sizeof(name));
 
   noecho();
   clear();
@@ -45,9 +39,17 @@ int main(int argc, const char *argv[]) {
   player_initialize(&player, id, name, y, x);
   ui_draw_player(player);
 
+  werld_client_connect();
+
+  endwin();
+  werld_client_send_player(player);
+
   do {
     keyboard_event(getch());
   } while (true);
+
+  endwin();
+  werld_client_disconnect();
 
   return(0);
 }

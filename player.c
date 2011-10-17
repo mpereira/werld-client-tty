@@ -8,13 +8,13 @@
 #include "player.h"
 #include "ui.h"
 
-void player_initialize(struct player *player, int id, char *name, int y, int x) {
-  if (!(player->name = malloc(strlen(name)))) {
-    fprintf(stderr, "%s\n", strerror(errno));
-    exit(errno);
-  }
-  strcpy(player->name, name);
+void player_initialize(struct player *player,
+                       const int id,
+                       const char *name,
+                       const int y,
+                       const int x) {
   player->id = id;
+  strcpy(player->name, name);
   player->y = y;
   player->x = x;
 }

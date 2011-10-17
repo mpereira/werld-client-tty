@@ -9,12 +9,16 @@
 
 struct player {
   int id;
-  char *name;
+  char name[MAX_NAME_SIZE];
   int y;
   int x;
 };
 
-void player_initialize(struct player *, int, char *, int, int);
+void player_initialize(struct player *,
+                       const int,
+                       const char *,
+                       const int,
+                       const int);
 void player_move(struct player *, enum movement);
 
 struct player player;
