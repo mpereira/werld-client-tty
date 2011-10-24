@@ -43,6 +43,7 @@ int main(int argc, const char *argv[]) {
 
   struct player_list *player_list = werld_client_get_players();
   ui_draw_player_list(player_list);
+  player_list_free(player_list);
 
   do {
     keyboard_event(getch());

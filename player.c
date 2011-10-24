@@ -6,6 +6,7 @@
 
 #include "movement.h"
 #include "player.h"
+#include "player_list.h"
 #include "ui.h"
 #include "werld_client.h"
 
@@ -20,7 +21,15 @@ void player_initialize(struct player *player,
   player->x = x;
 }
 
+void player_free(struct player *player) {
+  if (player) {
+    free(player);
+  }
+}
+
 void player_move(struct player *player, enum movement movement) {
+  struct player_list *player_list = werld_client_get_players();
+
   ui_erase_player(*player);
   switch (movement) {
   case LEFT:
@@ -37,5 +46,8 @@ void player_move(struct player *player, enum movement movement) {
     break;
   }
   ui_draw_player(*player);
+
+  ui_draw_player_list(player_list);
+  player_list_free(player_list);
   werld_client_send_player(*player);
 }

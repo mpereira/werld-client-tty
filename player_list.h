@@ -8,4 +8,6 @@ struct player_list {
   struct player_list *next;
 };
 
+void player_list_free(struct player_list *);
+
 #endif

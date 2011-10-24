@@ -19,6 +19,7 @@ void player_initialize(struct player *,
                        const char *,
                        const int,
                        const int);
+void player_free(struct player *);
 void player_move(struct player *, enum movement);
 
 struct player player;
