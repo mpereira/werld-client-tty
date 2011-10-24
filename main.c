@@ -42,9 +42,7 @@ int main(int argc, const char *argv[]) {
   werld_client_connect();
 
   struct player_list *player_list = werld_client_get_players();
-  for (; player_list; player_list = player_list->next) {
-    ui_draw_player(*(player_list->player));
-  }
+  ui_draw_player_list(player_list);
 
   do {
     keyboard_event(getch());
