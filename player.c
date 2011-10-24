@@ -37,5 +37,5 @@ void player_move(struct player *player, enum movement movement) {
     break;
   }
   ui_draw_player(*player);
-  werld_client_send_player(player);
+  werld_client_send_player(*player);
 }

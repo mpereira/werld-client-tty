@@ -3,7 +3,8 @@
 
 #include "player.h"
 
-void ui_draw_player(struct player);
-void ui_erase_player(struct player);
+void ui_draw_player(const struct player);
+void ui_erase_player(const struct player);
+void ui_redraw_player(const struct player);
 
 #endif
