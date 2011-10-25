@@ -1,14 +1,10 @@
 #include <curses.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <errno.h>
-#include <malloc.h>
 
-#include "ui.h"
-#include "player.h"
 #include "keyboard.h"
+#include "player.h"
+#include "ui.h"
 #include "werld_client.h"
 
 int main(int argc, const char *argv[]) {
@@ -47,10 +43,11 @@ int main(int argc, const char *argv[]) {
 
   do {
     keyboard_event(getch());
+    /* Hack 'til we handle events from the server. */
+    player_list = werld_client_get_players();
+    ui_draw_player_list(player_list);
+    player_list_free(player_list);
   } while (true);
-
-  endwin();
-  werld_client_disconnect();
 
   return(0);
 }

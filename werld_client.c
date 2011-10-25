@@ -67,68 +67,38 @@ int werld_client_send_player(struct player player) {
 }
 
 struct player_list *werld_client_get_players(void) {
-  struct player_list *player_list, *head;
-  char *response;
+  struct player_list *player_list;
+  char response[GET_PLAYERS_BUFFER_SIZE];
   ssize_t bytes_written, bytes_read;
   int number_of_players;
-
-  if (!(response = malloc(GET_PLAYERS_BUFFER_SIZE))) {
-    fprintf(stderr, strerror(errno));
-    exit(errno);
-  }
 
   if ((bytes_written = write(fd, GET_PLAYERS, strlen(GET_PLAYERS))) < 0) {
     fprintf(stderr, strerror(errno));
     exit(errno);
   }
+  fprintf(stderr, "[get_players] bytes written: %zd\n", bytes_written);
 
   if ((bytes_read = read(fd, response, GET_PLAYERS_BUFFER_SIZE)) < 0) {
     fprintf(stderr, strerror(errno));
     exit(errno);
   }
-
-  fprintf(stderr, "[get_players] bytes written: %zd, bytes read: %zd\n", bytes_written, bytes_read);
+  fprintf(stderr, "[get_players] bytes read: %zd ", bytes_read);
+  for (int i = 0; i < bytes_read; i++) {
+    fprintf(stderr, "%x", response[i]);
+  }
+  fprintf(stderr, "\n");
 
   memcpy(&number_of_players, response, 4);
   fprintf(stderr, "[get_players] number of players: %d\n", number_of_players);
 
-  if (number_of_players > 0) {
-    if (!(player_list = malloc(sizeof(struct player_list)))) {
-      fprintf(stderr, strerror(errno));
-      exit(errno);
-    }
-  } else {
-    player_list = NULL;
-  }
+  struct player players[number_of_players];
 
-  head = player_list;
+  memcpy(players,
+         response + 4,
+         number_of_players * sizeof(struct player));
 
-  for (int i = 0; i < number_of_players; i++) {
-    if (!(player_list->player = malloc(sizeof(struct player)))) {
-      fprintf(stderr, strerror(errno));
-      exit(errno);
-    }
+  player_list_init(&player_list);
+  player_list_fill(&player_list, players, number_of_players);
 
-    memcpy(player_list->player,
-           (response + 4) + (i * sizeof(struct player)),
-           sizeof(struct player));
-    fprintf(stderr,
-            "[get_players] #player{id=%d, name=\"%s\", y=%d, x=%d}\n",
-            player_list->player->id,
-            player_list->player->name,
-            player_list->player->y,
-            player_list->player->x);
-
-    if (i == (number_of_players - 1)) {
-      player_list->next = NULL;
-    } else {
-      if (!(player_list->next = malloc(sizeof(struct player)))) {
-        fprintf(stderr, strerror(errno));
-        exit(errno);
-      }
-      player_list = player_list->next;
-    }
-  }
-
-  return(head);
+  return(player_list);
 }
