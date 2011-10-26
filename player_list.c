@@ -20,14 +20,16 @@ void player_list_free(struct player_list *player_list) {
 void player_list_fill(struct player_list **player_list,
                       const struct player players[],
                       const int number_of_players) {
-  struct player_list *iterator;
+  if (number_of_players <= 0) {
+    return;
+  }
 
   if (!(*player_list = malloc(sizeof(**player_list)))) {
     fprintf(stderr, strerror(errno));
     exit(errno);
   }
 
-  iterator = *player_list;
+  struct player_list *iterator = *player_list;
 
   for (int i = 0; i < number_of_players; i++) {
     if (!(iterator->player = malloc(sizeof(struct player)))) {
