@@ -52,16 +52,17 @@ int werld_client_send_player(struct player player) {
     fprintf(stderr, strerror(errno));
     exit(errno);
   }
+  fprintf(stderr, "[send_player] bytes written: %zd ", bytes_written);
+  for (int i = 0; i < bytes_written; i++) {
+    fprintf(stderr, "%x", ((char *) &player)[i]);
+  }
+  fprintf(stderr, "\n");
 
   if ((bytes_read = read(fd, &response, SEND_PLAYER_BUFFER_SIZE)) < 0) {
     fprintf(stderr, strerror(errno));
     exit(errno);
   }
-
-  fprintf(stderr,
-          "[send_player] bytes written: %zd, bytes read: %zd\n",
-          bytes_written,
-          bytes_read);
+  fprintf(stderr, "[send_player] bytes read: %zd\n", bytes_read);
 
   return(atoi(response));
 }
