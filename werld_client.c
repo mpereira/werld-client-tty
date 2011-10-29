@@ -14,27 +14,44 @@
 #include "player_list.h"
 #include "werld_client.h"
 
-void werld_client_connect(void) {
-  struct sockaddr_in socket_address;
+int werld_client_connect(void) {
+  int status;
+  struct addrinfo hints;
+  struct addrinfo *results;
 
-  memset(&socket_address, 0, sizeof(socket_address));
-  socket_address.sin_family = AF_INET;
-  socket_address.sin_port = htons(SERVER_PORT);
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_family = AF_UNSPEC;
+  hints.ai_socktype = SOCK_STREAM;
 
-  if (!inet_aton(SERVER_ADDRESS, &(socket_address.sin_addr))) {
-    fprintf(stderr, strerror(errno));
+  if ((status = getaddrinfo(SERVER_ADDRESS, SERVER_PORT, &hints, &results))) {
+    fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
     exit(errno);
   }
 
-  if ((fd = socket(socket_address.sin_family, SOCK_STREAM, 0)) < 0) {
-    fprintf(stderr, strerror(errno));
-    exit(errno);
+  struct addrinfo *iterator;
+
+  for (iterator = results; iterator; iterator = iterator->ai_next) {
+    if ((fd = socket(iterator->ai_family,
+                     iterator->ai_socktype,
+                     iterator->ai_protocol)) == -1) {
+      continue;
+    }
+
+    if (connect(fd, iterator->ai_addr, iterator->ai_addrlen) == -1) {
+      close(fd);
+      continue;
+    }
+
+    break;
   }
 
-  if (connect(fd, &socket_address, sizeof(socket_address))) {
-    fprintf(stderr, strerror(errno));
-    exit(errno);
+  freeaddrinfo(results);
+
+  if (iterator) {
+    return(0);
   }
+
+  return(-1);
 }
 
 void werld_client_disconnect(void) {

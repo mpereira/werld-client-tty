@@ -8,6 +8,7 @@
 #include "werld_client.h"
 
 int main(int argc, const char *argv[]) {
+  int status;
   char name[MAX_NAME_SIZE];
 
   initscr();
@@ -35,7 +36,10 @@ int main(int argc, const char *argv[]) {
   player_initialize(&player, id, name, y, x);
   ui_draw_player(player);
 
-  werld_client_connect();
+  if ((status = werld_client_connect()) == -1) {
+    fprintf(stderr, "%s: failed to connect to the server\n", argv[0]);
+    return(status);
+  }
 
   struct player_list *player_list = werld_client_get_players();
   ui_draw_player_list(player_list);
