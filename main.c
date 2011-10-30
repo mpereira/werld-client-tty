@@ -1,6 +1,11 @@
+#define _POSIX_SOURCE
 #include <curses.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/time.h>
+#include <sys/types.h>
 
 #include "keyboard.h"
 #include "player.h"
@@ -36,21 +41,35 @@ int main(int argc, const char *argv[]) {
   player_initialize(&player, id, name, y, x);
   ui_draw_player(player);
 
-  if ((status = werld_client_connect()) == -1) {
+  if ((status = werld_client_connect(player)) == -1) {
     fprintf(stderr, "%s: failed to connect to the server\n", argv[0]);
     return(status);
   }
 
-  struct player_list *player_list = werld_client_get_players();
+  struct player_list *player_list = werld_client_get_players();;
   ui_draw_player_list(player_list);
   player_list_free(player_list);
 
+  fd_set master_fds, read_fds;
+  extern int fd;
+
+  FD_ZERO(&master_fds);
+  FD_SET(fileno(stdin), &master_fds);
+  FD_SET(fd, &master_fds);
+
   do {
-    keyboard_event(getch());
-    /* Hack 'til we handle events from the server. */
-    player_list = werld_client_get_players();
-    ui_draw_player_list(player_list);
-    player_list_free(player_list);
+    read_fds = master_fds;
+    if (select(fd + 1, &read_fds, NULL, NULL, NULL) == -1) {
+      perror("select");
+      continue;
+    }
+    if (FD_ISSET(fileno(stdin), &read_fds)) {
+      keyboard_event(getch());
+    } else if (FD_ISSET(fd, &read_fds)) {
+      player_list = werld_client_handle_server_response();
+      ui_draw_player_list(player_list);
+      player_list_free(player_list);
+    }
   } while (true);
 
   return(0);

@@ -16,7 +16,7 @@ void player_initialize(struct player *player,
                        const int y,
                        const int x) {
   player->id = id;
-  strcpy(player->name, name);
+  strncpy(player->name, name, strlen(name));
   player->y = y;
   player->x = x;
 }

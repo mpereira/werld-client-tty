@@ -11,6 +11,7 @@ void ui_draw_player(const struct player player) {
            "(%s)",
            player.name);
   mvprintw(player.y, player.x, "@");
+  refresh();
 }
 
 void ui_erase_player(const struct player player) {
@@ -24,6 +25,7 @@ void ui_redraw_player(const struct player player) {
 }
 
 void ui_draw_player_list(const struct player_list *player_list) {
+  clear();
   for (; player_list; player_list = player_list->next) {
     ui_draw_player(*(player_list->player));
   }
