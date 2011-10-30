@@ -16,10 +16,10 @@
 
 static void werld_client_register(const struct player player) {
   ssize_t bytes_written;
-  char payload[REGISTER_BUFFER_SIZE];
+  char payload[REQ_REGISTER_BUFSIZ];
 
-  memcpy(payload, REGISTER, strlen(REGISTER));
-  memcpy(payload + strlen(REGISTER), &player, sizeof(player));
+  memcpy(payload, REQ_REGISTER, strlen(REQ_REGISTER));
+  memcpy(payload + strlen(REQ_REGISTER), &player, sizeof(player));
 
   if ((bytes_written = write(fd, &payload, sizeof(payload))) < 0) {
     fprintf(stderr, strerror(errno));
@@ -81,53 +81,54 @@ void werld_client_disconnect(void) {
 }
 
 int werld_client_send_player(struct player player) {
-  char response[SEND_PLAYER_BUFFER_SIZE];
-  ssize_t bytes_read, bytes_written;
+  ssize_t bytes_written;
+  char payload[REQ_PLAYER_BUFSIZ];
 
-  if ((bytes_written = write(fd, &player, sizeof(player))) < 0) {
+  memcpy(payload, REQ_PLAYER, strlen(REQ_PLAYER));
+  memcpy(payload + strlen(REQ_PLAYER), &player, sizeof(player));
+
+  if ((bytes_written = write(fd, &payload, sizeof(payload))) < 0) {
     fprintf(stderr, strerror(errno));
     exit(errno);
   }
   fprintf(stderr, "[send_player] bytes written: %zd ", bytes_written);
   for (int i = 0; i < bytes_written; i++) {
-    fprintf(stderr, "%x", ((char *) &player)[i]);
+    fprintf(stderr, "%x", ((char *) &payload)[i]);
   }
   fprintf(stderr, "\n");
 
   return(1);
 }
 
-struct player_list *werld_client_get_players(void) {
+void werld_client_request_players(void) {
   ssize_t bytes_written;
 
-  if ((bytes_written = write(fd, GET_PLAYERS, strlen(GET_PLAYERS))) < 0) {
+  if ((bytes_written = write(fd, REQ_PLAYERS, strlen(REQ_PLAYERS))) < 0) {
     fprintf(stderr, strerror(errno));
     exit(errno);
   }
-  fprintf(stderr, "[get_players] bytes written: %zd\n", bytes_written);
-
-  return(werld_client_handle_server_response());
+  fprintf(stderr, "[request_players] bytes written: %zd\n", bytes_written);
 }
 
-struct player_list *werld_client_handle_server_response() {
+struct player_list *werld_client_handle_response() {
   struct player_list *player_list;
-  char response[GET_PLAYERS_BUFFER_SIZE];
+  char response[RESPONSE_BUFSIZ];
   ssize_t bytes_read;
   int number_of_players;
 
-  if ((bytes_read = read(fd, response, GET_PLAYERS_BUFFER_SIZE)) < 0) {
+  if ((bytes_read = read(fd, response, RESPONSE_BUFSIZ)) < 0) {
     fprintf(stderr, strerror(errno));
     exit(errno);
   }
 
-  fprintf(stderr, "[handle_server_response] bytes read: %zd ", bytes_read);
+  fprintf(stderr, "[handle_response] bytes read: %zd ", bytes_read);
   for (int i = 0; i < bytes_read; i++) {
     fprintf(stderr, "%x", response[i]);
   }
   fprintf(stderr, "\n");
 
   memcpy(&number_of_players, response, 4);
-  fprintf(stderr, "[handle_server_response] number of players: %d\n", number_of_players);
+  fprintf(stderr, "[handle_response] number of players: %d\n", number_of_players);
 
   struct player players[number_of_players];
 

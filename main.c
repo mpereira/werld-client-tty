@@ -46,16 +46,17 @@ int main(int argc, const char *argv[]) {
     return(status);
   }
 
-  struct player_list *player_list = werld_client_get_players();;
-  ui_draw_player_list(player_list);
-  player_list_free(player_list);
-
   fd_set master_fds, read_fds;
   extern int fd;
 
   FD_ZERO(&master_fds);
   FD_SET(fileno(stdin), &master_fds);
   FD_SET(fd, &master_fds);
+
+  werld_client_request_players();
+  struct player_list *player_list = werld_client_handle_response();
+  ui_draw_player_list(player_list);
+  player_list_free(player_list);
 
   do {
     read_fds = master_fds;
@@ -66,7 +67,7 @@ int main(int argc, const char *argv[]) {
     if (FD_ISSET(fileno(stdin), &read_fds)) {
       keyboard_event(getch());
     } else if (FD_ISSET(fd, &read_fds)) {
-      player_list = werld_client_handle_server_response();
+      player_list = werld_client_handle_response();
       ui_draw_player_list(player_list);
       player_list_free(player_list);
     }
