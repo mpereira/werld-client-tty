@@ -6,12 +6,14 @@
 #define SERVER_ADDRESS "0.0.0.0"
 #define SERVER_PORT "9876"
 
-#define REQ_PLAYER   "player"
-#define REQ_PLAYERS  "players"
-#define REQ_REGISTER "register"
+#define REQ_PLAYER     "player"
+#define REQ_PLAYERS    "players"
+#define REQ_REGISTER   "register"
+#define REQ_UNREGISTER "unregister"
 
-#define REQ_PLAYER_BUFSIZ (strlen(REQ_PLAYER) + sizeof(struct player))
-#define REQ_REGISTER_BUFSIZ (strlen(REQ_REGISTER) + sizeof(struct player))
+#define REQ_PLAYER_BUFSIZ     (strlen(REQ_PLAYER) + sizeof(struct player))
+#define REQ_REGISTER_BUFSIZ   (strlen(REQ_REGISTER) + sizeof(struct player))
+#define REQ_UNREGISTER_BUFSIZ (strlen(REQ_UNREGISTER) + sizeof(struct player))
 
 #define RESPONSE_BUFSIZ (1024 * 1024)
 

@@ -74,6 +74,22 @@ int werld_client_connect(const struct player player) {
 }
 
 void werld_client_disconnect(void) {
+  ssize_t bytes_written;
+  char payload[REQ_UNREGISTER_BUFSIZ];
+
+  memcpy(payload, REQ_UNREGISTER, strlen(REQ_UNREGISTER));
+  memcpy(payload + strlen(REQ_UNREGISTER), &player, sizeof(player));
+
+  if ((bytes_written = write(fd, &payload, sizeof(payload))) < 0) {
+    fprintf(stderr, strerror(errno));
+    exit(errno);
+  }
+  fprintf(stderr, "[disconnect] bytes written: %zd ", bytes_written);
+  for (int i = 0; i < bytes_written; i++) {
+    fprintf(stderr, "%x", ((char *) &payload)[i]);
+  }
+  fprintf(stderr, "\n");
+
   if (close(fd)) {
     fprintf(stderr, strerror(errno));
     exit(errno);
