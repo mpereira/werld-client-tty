@@ -126,8 +126,7 @@ void werld_client_request_players(void) {
   fprintf(stderr, "[request_players] bytes written: %zd\n", bytes_written);
 }
 
-struct player_list *werld_client_handle_response() {
-  struct player_list *player_list;
+int werld_client_handle_response(struct player_list **player_list) {
   char response[RESPONSE_BUFSIZ];
   ssize_t bytes_read;
   int number_of_players;
@@ -135,6 +134,10 @@ struct player_list *werld_client_handle_response() {
   if ((bytes_read = read(fd, response, RESPONSE_BUFSIZ)) < 0) {
     perror("read");
     exit(errno);
+  }
+
+  if (bytes_read == 0) {
+    return(-1);
   }
 
   fprintf(stderr, "[handle_response] bytes read: %zd ", bytes_read);
@@ -152,8 +155,8 @@ struct player_list *werld_client_handle_response() {
          response + 4,
          number_of_players * sizeof(struct player));
 
-  player_list_init(&player_list);
-  player_list_fill(&player_list, players, number_of_players);
+  player_list_init(player_list);
+  player_list_fill(player_list, players, number_of_players);
 
-  return(player_list);
+  return(0);
 }

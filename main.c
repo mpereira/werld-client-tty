@@ -13,7 +13,6 @@
 #include "werld_client.h"
 
 int main(int argc, const char *argv[]) {
-  int status;
   char name[MAX_NAME_SIZE];
 
   initscr();
@@ -41,9 +40,10 @@ int main(int argc, const char *argv[]) {
   player_initialize(&player, id, name, y, x);
   ui_draw_player(player);
 
-  if ((status = werld_client_connect(player)) == -1) {
+  if (werld_client_connect(player) == -1) {
+    endwin();
     fprintf(stderr, "%s: failed to connect to the server\n", argv[0]);
-    return(status);
+    return(-1);
   }
 
   fd_set master_fds, read_fds;
@@ -54,7 +54,12 @@ int main(int argc, const char *argv[]) {
   FD_SET(fd, &master_fds);
 
   werld_client_request_players();
-  struct player_list *player_list = werld_client_handle_response();
+  struct player_list *player_list;
+  if (werld_client_handle_response(&player_list) == -1) {
+    endwin();
+    fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
+    return(-1);
+  }
   ui_draw_player_list(player_list);
   player_list_free(player_list);
 
@@ -67,7 +72,11 @@ int main(int argc, const char *argv[]) {
     if (FD_ISSET(fileno(stdin), &read_fds)) {
       keyboard_event(getch());
     } else if (FD_ISSET(fd, &read_fds)) {
-      player_list = werld_client_handle_response();
+      if (werld_client_handle_response(&player_list) == -1) {
+        endwin();
+        fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
+        return(-1);
+      }
       ui_draw_player_list(player_list);
       player_list_free(player_list);
     }

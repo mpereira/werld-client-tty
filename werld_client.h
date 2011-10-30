@@ -21,7 +21,7 @@ int werld_client_connect(struct player);
 void werld_client_disconnect(void);
 int werld_client_send_player(struct player);
 void werld_client_request_players(void);
-struct player_list *werld_client_handle_response(void);
+int werld_client_handle_response(struct player_list **);
 
 int fd;
 
