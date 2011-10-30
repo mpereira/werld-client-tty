@@ -7,7 +7,7 @@
 
 void ui_draw_player(const struct player player) {
   mvprintw(player.y - 1,
-           player.x - strlen(player.name) / 2,
+           (player.x - strlen(player.name) / 2) -1,
            "(%s)",
            player.name);
   mvprintw(player.y, player.x, "@");
