@@ -22,7 +22,7 @@ static void werld_client_register(const struct player player) {
   memcpy(payload + strlen(REQ_REGISTER), &player, sizeof(player));
 
   if ((bytes_written = write(fd, &payload, sizeof(payload))) < 0) {
-    fprintf(stderr, strerror(errno));
+    perror("write");
     exit(errno);
   }
   fprintf(stderr, "[register] bytes written: %zd ", bytes_written);
@@ -81,7 +81,7 @@ void werld_client_disconnect(void) {
   memcpy(payload + strlen(REQ_UNREGISTER), &player, sizeof(player));
 
   if ((bytes_written = write(fd, &payload, sizeof(payload))) < 0) {
-    fprintf(stderr, strerror(errno));
+    perror("write");
     exit(errno);
   }
   fprintf(stderr, "[disconnect] bytes written: %zd ", bytes_written);
@@ -91,7 +91,7 @@ void werld_client_disconnect(void) {
   fprintf(stderr, "\n");
 
   if (close(fd)) {
-    fprintf(stderr, strerror(errno));
+    perror("close");
     exit(errno);
   }
 }
@@ -104,7 +104,7 @@ int werld_client_send_player(struct player player) {
   memcpy(payload + strlen(REQ_PLAYER), &player, sizeof(player));
 
   if ((bytes_written = write(fd, &payload, sizeof(payload))) < 0) {
-    fprintf(stderr, strerror(errno));
+    perror("write");
     exit(errno);
   }
   fprintf(stderr, "[send_player] bytes written: %zd ", bytes_written);
@@ -120,7 +120,7 @@ void werld_client_request_players(void) {
   ssize_t bytes_written;
 
   if ((bytes_written = write(fd, REQ_PLAYERS, strlen(REQ_PLAYERS))) < 0) {
-    fprintf(stderr, strerror(errno));
+    perror("write");
     exit(errno);
   }
   fprintf(stderr, "[request_players] bytes written: %zd\n", bytes_written);
@@ -133,7 +133,7 @@ struct player_list *werld_client_handle_response() {
   int number_of_players;
 
   if ((bytes_read = read(fd, response, RESPONSE_BUFSIZ)) < 0) {
-    fprintf(stderr, strerror(errno));
+    perror("read");
     exit(errno);
   }
 

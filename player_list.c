@@ -25,7 +25,7 @@ void player_list_fill(struct player_list **player_list,
   }
 
   if (!(*player_list = malloc(sizeof(**player_list)))) {
-    fprintf(stderr, strerror(errno));
+    perror("malloc");
     exit(errno);
   }
 
@@ -33,7 +33,7 @@ void player_list_fill(struct player_list **player_list,
 
   for (int i = 0; i < number_of_players; i++) {
     if (!(iterator->player = malloc(sizeof(struct player)))) {
-      fprintf(stderr, strerror(errno));
+      perror("malloc");
       exit(errno);
     }
 
@@ -43,7 +43,7 @@ void player_list_fill(struct player_list **player_list,
       iterator->next = NULL;
     } else {
       if (!(iterator->next = malloc(sizeof(struct player_list)))) {
-        fprintf(stderr, strerror(errno));
+        perror("malloc");
         exit(errno);
       }
       iterator = iterator->next;
