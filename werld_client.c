@@ -18,10 +18,10 @@
 
 static void werld_client_register(const struct player player) {
   ssize_t bytes_written;
-  char payload[REQ_REGISTER_BUFSIZ];
+  char payload[REQUEST_REGISTER_BUFSIZ];
 
-  memcpy(payload, REQ_REGISTER, strlen(REQ_REGISTER));
-  memcpy(payload + strlen(REQ_REGISTER), &player, sizeof(struct player));
+  memcpy(payload, REQUEST_REGISTER, strlen(REQUEST_REGISTER));
+  memcpy(payload + strlen(REQUEST_REGISTER), &player, sizeof(struct player));
 
   if ((bytes_written = write(fd, payload, sizeof(payload))) < 0) {
     perror("write");
@@ -77,10 +77,10 @@ int werld_client_connect(const struct player player) {
 
 void werld_client_disconnect(void) {
   ssize_t bytes_written;
-  char payload[REQ_UNREGISTER_BUFSIZ];
+  char payload[REQUEST_UNREGISTER_BUFSIZ];
 
-  memcpy(payload, REQ_UNREGISTER, strlen(REQ_UNREGISTER));
-  memcpy(payload + strlen(REQ_UNREGISTER), &player, sizeof(player));
+  memcpy(payload, REQUEST_UNREGISTER, strlen(REQUEST_UNREGISTER));
+  memcpy(payload + strlen(REQUEST_UNREGISTER), &player, sizeof(player));
 
   if ((bytes_written = write(fd, &payload, sizeof(payload))) < 0) {
     perror("write");
@@ -100,10 +100,10 @@ void werld_client_disconnect(void) {
 
 int werld_client_send_player(struct player player) {
   ssize_t bytes_written;
-  char payload[REQ_PLAYER_BUFSIZ];
+  char payload[REQUEST_PLAYER_BUFSIZ];
 
-  memcpy(payload, REQ_PLAYER, strlen(REQ_PLAYER));
-  memcpy(payload + strlen(REQ_PLAYER), &player, sizeof(player));
+  memcpy(payload, REQUEST_PLAYER, strlen(REQUEST_PLAYER));
+  memcpy(payload + strlen(REQUEST_PLAYER), &player, sizeof(player));
 
   if ((bytes_written = write(fd, &payload, sizeof(payload))) < 0) {
     perror("write");
@@ -121,7 +121,9 @@ int werld_client_send_player(struct player player) {
 void werld_client_request_players(void) {
   ssize_t bytes_written;
 
-  if ((bytes_written = write(fd, REQ_PLAYERS, strlen(REQ_PLAYERS))) < 0) {
+  if ((bytes_written = write(fd,
+                             REQUEST_PLAYERS,
+                             strlen(REQUEST_PLAYERS))) < 0) {
     perror("write");
     exit(errno);
   }
@@ -182,7 +184,9 @@ int werld_client_handle_response(void) {
     struct player player;
 
     memcpy(&player, event_message_payload, sizeof(struct player));
-    memcpy(message, event_message_payload + sizeof(struct player), sizeof(message) - 1);
+    memcpy(message,
+           event_message_payload + sizeof(struct player),
+           sizeof(message) - 1);
     message[sizeof(message)] = '\0';
 
     ui_draw_player_with_message(player, message);
@@ -237,15 +241,17 @@ int werld_client_handle_response(void) {
 }
 
 void werld_client_send_message(const struct player player, const char *message) {
-  char payload[REQ_MESSAGE_BUFSIZ];
+  char payload[REQUEST_MESSAGE_BUFSIZ];
   ssize_t bytes_written;
 
-  void *offset = mempcpy(payload, REQ_MESSAGE, strlen(REQ_MESSAGE));
+  void *offset = mempcpy(payload, REQUEST_MESSAGE, strlen(REQUEST_MESSAGE));
   /* FIXME: Don't send entire player. */
   offset = mempcpy(offset, &player, sizeof(player));
   memcpy(offset, message, strlen(message));
 
-  ssize_t payload_size = strlen(REQ_MESSAGE) + sizeof(player) + strlen(message);
+  ssize_t payload_size = strlen(REQUEST_MESSAGE) +
+                           sizeof(player) +
+                           strlen(message);
 
   if ((bytes_written = write(fd, &payload, payload_size)) < 0) {
     perror("write");

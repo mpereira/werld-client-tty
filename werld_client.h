@@ -6,15 +6,15 @@
 #define SERVER_ADDRESS "0.0.0.0"
 #define SERVER_PORT    "9876"
 
-#define EVENT_HEADER_BUFSIZ (4)
 #define MESSAGE_BUFSIZ      (140)
 
-// FIXME: s/REQ/REQUEST
-#define REQ_PLAYER     "player"
-#define REQ_PLAYERS    "players"
-#define REQ_REGISTER   "register"
-#define REQ_UNREGISTER "unregister"
-#define REQ_MESSAGE    "message"
+#define REQUEST_PLAYER     "player"
+#define REQUEST_PLAYERS    "players"
+#define REQUEST_REGISTER   "register"
+#define REQUEST_UNREGISTER "unregister"
+#define REQUEST_MESSAGE    "message"
+
+#define EVENT_HEADER_BUFSIZ (4)
 
 #define EVENT_ERROR   -1
 #define EVENT_MESSAGE 0
@@ -23,12 +23,19 @@
 #define RESPONSE_ERROR   -1
 #define RESPONSE_MESSAGE 0
 
-#define REQ_PLAYER_BUFSIZ     (strlen(REQ_PLAYER) + sizeof(struct player))
-#define REQ_REGISTER_BUFSIZ   (strlen(REQ_REGISTER) + sizeof(struct player))
-#define REQ_UNREGISTER_BUFSIZ (strlen(REQ_UNREGISTER) + sizeof(struct player))
-#define REQ_MESSAGE_BUFSIZ    (strlen(REQ_MESSAGE) + sizeof(struct player) + MESSAGE_BUFSIZ)
+#define REQUEST_PLAYER_BUFSIZ     (strlen(REQUEST_PLAYER) + \
+                                   sizeof(struct player))
+#define REQUEST_REGISTER_BUFSIZ   (strlen(REQUEST_REGISTER) + \
+                                   sizeof(struct player))
+#define REQUEST_UNREGISTER_BUFSIZ (strlen(REQUEST_UNREGISTER) + \
+                                   sizeof(struct player))
+#define REQUEST_MESSAGE_BUFSIZ    (strlen(REQUEST_MESSAGE) + \
+                                   sizeof(struct player) + \
+                                   MESSAGE_BUFSIZ)
 
-#define RESPONSE_MESSAGE_BUFSIZ (sizeof(int) + sizeof(struct player) + MESSAGE_BUFSIZ)
+#define RESPONSE_MESSAGE_BUFSIZ (sizeof(int) + \
+                                 sizeof(struct player) + \
+                                 MESSAGE_BUFSIZ)
 
 int werld_client_connect(struct player);
 void werld_client_disconnect(void);
