@@ -18,7 +18,7 @@ void player_list_free(struct player_list *player_list) {
 }
 
 void player_list_fill(struct player_list **player_list,
-                      const struct player players[],
+                      const struct player *players,
                       const int number_of_players) {
   if (number_of_players <= 0) {
     return;

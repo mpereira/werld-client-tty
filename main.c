@@ -46,22 +46,18 @@ int main(int argc, const char *argv[]) {
     return(-1);
   }
 
+  if (werld_client_handle_response() == -1) {
+    endwin();
+    fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
+    return(-1);
+  }
+
   fd_set master_fds, read_fds;
   extern int fd;
 
   FD_ZERO(&master_fds);
   FD_SET(fileno(stdin), &master_fds);
   FD_SET(fd, &master_fds);
-
-  werld_client_request_players();
-  struct player_list *player_list;
-  if (werld_client_handle_response(&player_list) == -1) {
-    endwin();
-    fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
-    return(-1);
-  }
-  ui_draw_player_list(player_list);
-  player_list_free(player_list);
 
   do {
     read_fds = master_fds;
@@ -70,15 +66,13 @@ int main(int argc, const char *argv[]) {
       continue;
     }
     if (FD_ISSET(fileno(stdin), &read_fds)) {
-      keyboard_event(getch());
+      keyboard_event(wgetch(stdscr));
     } else if (FD_ISSET(fd, &read_fds)) {
-      if (werld_client_handle_response(&player_list) == -1) {
+      if (werld_client_handle_response() == -1) {
         endwin();
         fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
         return(-1);
       }
-      ui_draw_player_list(player_list);
-      player_list_free(player_list);
     }
   } while (true);
 

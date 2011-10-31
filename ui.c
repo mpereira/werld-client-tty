@@ -14,6 +14,16 @@ void ui_draw_player(const struct player player) {
   refresh();
 }
 
+void ui_draw_player_with_message(const struct player player, const char *message) {
+  clear();
+  mvprintw(player.y - 3,
+           (player.x - strlen(message) / 2),
+           "%s",
+           message);
+  ui_draw_player(player);
+  refresh();
+}
+
 void ui_erase_player(const struct player player) {
   clear();
   refresh();

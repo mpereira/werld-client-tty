@@ -10,6 +10,6 @@ struct player_list {
 
 void player_list_init(struct player_list **);
 void player_list_free(struct player_list *);
-void player_list_fill(struct player_list **, const struct player [], const int);
+void player_list_fill(struct player_list **, const struct player *, const int);
 
 #endif
