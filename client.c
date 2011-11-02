@@ -179,7 +179,9 @@ int client_handle_response(void) {
   ssize_t bytes_read;
   uint32_t response_type;
 
-  if ((bytes_read = read(fd, &response_type, sizeof(WERLD_RESPONSE_TYPE_BUFSIZ))) < 0) {
+  if ((bytes_read = read(fd,
+                         &response_type,
+                         sizeof(WERLD_RESPONSE_TYPE_BUFSIZ))) < 0) {
     perror("read");
     exit(errno);
   }
