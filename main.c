@@ -1,4 +1,3 @@
-#define _POSIX_SOURCE
 #include <curses.h>
 #include <stdbool.h>
 #include <stdio.h>
