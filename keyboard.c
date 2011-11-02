@@ -7,8 +7,8 @@
 #include "player.h"
 #include "player_list.h"
 
-#define MESSAGE_INPUT_Y 24
-#define MESSAGE_INPUT_X 0
+#define WERLD_MESSAGE_INPUT_Y 22
+#define WERLD_MESSAGE_INPUT_X 0
 
 void keyboard_event(int key) {
   char message[WERLD_PLAYER_MESSAGE_BUFSIZ];
@@ -23,8 +23,8 @@ void keyboard_event(int key) {
     echo();
     curs_set(true);
     mvwgetnstr(stdscr,
-               MESSAGE_INPUT_Y,
-               MESSAGE_INPUT_X,
+               WERLD_MESSAGE_INPUT_Y,
+               WERLD_MESSAGE_INPUT_X,
                message,
                sizeof(message) - 1);
     client_send_message(player, message);

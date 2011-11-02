@@ -12,7 +12,7 @@
 #include "ui.h"
 
 int main(int argc, const char *argv[]) {
-  char name[MAX_NAME_SIZE];
+  char name[WERLD_PLAYER_NAME_BUFSIZ];
 
   initscr();
   raw();

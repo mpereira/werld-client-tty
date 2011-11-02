@@ -1,13 +1,13 @@
 #ifndef WERLD_PLAYER_H
 #define WERLD_PLAYER_H
 
-#define MAX_NAME_SIZE 20
+#define WERLD_PLAYER_NAME_BUFSIZ (20)
 
 #include "movement.h"
 
 struct player {
   int id;
-  char name[MAX_NAME_SIZE];
+  char name[WERLD_PLAYER_NAME_BUFSIZ];
   int y;
   int x;
 };
