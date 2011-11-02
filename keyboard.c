@@ -11,7 +11,7 @@
 #define MESSAGE_INPUT_X 0
 
 void keyboard_event(int key) {
-  char message[MESSAGE_BUFSIZ];
+  char message[WERLD_PLAYER_MESSAGE_BUFSIZ];
 
   switch (key) {
   case 'q':

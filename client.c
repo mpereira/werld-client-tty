@@ -12,22 +12,56 @@
 #include "player_list.h"
 #include "ui.h"
 
+#define WERLD_SERVER_ADDRESS "0.0.0.0"
+#define WERLD_SERVER_PORT    "9876"
+
+#define WERLD_REQUEST_PLAYER     "player"
+#define WERLD_REQUEST_PLAYERS    "players"
+#define WERLD_REQUEST_REGISTER   "register"
+#define WERLD_REQUEST_UNREGISTER "unregister"
+#define WERLD_REQUEST_MESSAGE    "message"
+
+#define WERLD_RESPONSE_TYPE_BUFSIZ (4)
+
+#define WERLD_RESPONSE_ERROR        -1
+#define WERLD_RESPONSE_TYPE_ERROR   -1
+#define WERLD_RESPONSE_TYPE_MESSAGE 0
+#define WERLD_RESPONSE_TYPE_PLAYERS 1
+
+#define WERLD_REQUEST_PLAYER_BUFSIZ (strlen(WERLD_REQUEST_PLAYER) + \
+                                     sizeof(struct player))
+
+#define WERLD_REQUEST_REGISTER_BUFSIZ (strlen(WERLD_REQUEST_REGISTER) + \
+                                       sizeof(struct player))
+
+#define WERLD_REQUEST_UNREGISTER_BUFSIZ (strlen(WERLD_REQUEST_UNREGISTER) + \
+                                         sizeof(struct player))
+
+#define WERLD_REQUEST_MESSAGE_BUFSIZ (strlen(WERLD_REQUEST_MESSAGE) + \
+                                      sizeof(struct player) + \
+                                      WERLD_PLAYER_MESSAGE_BUFSIZ)
+
+#define WERLD_REQUEST_MESSAGE_SIZE(message) (strlen(WERLD_REQUEST_MESSAGE) + \
+                                             sizeof(struct player) + \
+                                             strlen(message))
+
 int fd;
 
 static void client_register(struct player player) {
   ssize_t bytes_written;
-  char payload[REQUEST_REGISTER_BUFSIZ];
+  char data[WERLD_REQUEST_REGISTER_BUFSIZ];
 
-  memcpy(payload, REQUEST_REGISTER, strlen(REQUEST_REGISTER));
-  memcpy(payload + strlen(REQUEST_REGISTER), &player, sizeof(struct player));
+  void *offset =
+    mempcpy(data, WERLD_REQUEST_REGISTER, strlen(WERLD_REQUEST_REGISTER));
+  memcpy(offset, &player, sizeof(struct player));
 
-  if ((bytes_written = write(fd, payload, sizeof(payload))) < 0) {
+  if ((bytes_written = write(fd, data, sizeof(data))) < 0) {
     perror("write");
     exit(errno);
   }
   fprintf(stderr, "[register] bytes written: %zd ", bytes_written);
   for (int i = 0; i < bytes_written; i++) {
-    fprintf(stderr, "%x", ((char *) payload)[i]);
+    fprintf(stderr, "%x", ((char *) data)[i]);
   }
   fprintf(stderr, "\n");
 }
@@ -76,20 +110,21 @@ int client_connect(struct player player) {
   return(-1);
 }
 
-void client_disconnect(struct player player) {
+int client_disconnect(struct player player) {
   ssize_t bytes_written;
-  char payload[REQUEST_UNREGISTER_BUFSIZ];
+  char data[WERLD_REQUEST_UNREGISTER_BUFSIZ];
 
-  memcpy(payload, REQUEST_UNREGISTER, strlen(REQUEST_UNREGISTER));
-  memcpy(payload + strlen(REQUEST_UNREGISTER), &player, sizeof(player));
+  void *offset =
+    mempcpy(data, WERLD_REQUEST_UNREGISTER, strlen(WERLD_REQUEST_UNREGISTER));
+  memcpy(offset, &player, sizeof(player));
 
-  if ((bytes_written = write(fd, &payload, sizeof(payload))) < 0) {
+  if ((bytes_written = write(fd, &data, sizeof(data))) < 0) {
     perror("write");
     exit(errno);
   }
   fprintf(stderr, "[disconnect] bytes written: %zd ", bytes_written);
   for (int i = 0; i < bytes_written; i++) {
-    fprintf(stderr, "%x", ((char *) &payload)[i]);
+    fprintf(stderr, "%x", ((char *) &data)[i]);
   }
   fprintf(stderr, "\n");
 
@@ -97,45 +132,50 @@ void client_disconnect(struct player player) {
     perror("close");
     exit(errno);
   }
+
+  return(0);
 }
 
 int client_send_player(struct player player) {
   ssize_t bytes_written;
-  char payload[REQUEST_PLAYER_BUFSIZ];
+  char data[WERLD_REQUEST_PLAYER_BUFSIZ];
 
-  memcpy(payload, REQUEST_PLAYER, strlen(REQUEST_PLAYER));
-  memcpy(payload + strlen(REQUEST_PLAYER), &player, sizeof(player));
+  void *offset =
+    mempcpy(data, WERLD_REQUEST_PLAYER, strlen(WERLD_REQUEST_PLAYER));
+  memcpy(offset, &player, sizeof(player));
 
-  if ((bytes_written = write(fd, &payload, sizeof(payload))) < 0) {
+  if ((bytes_written = write(fd, &data, sizeof(data))) < 0) {
     perror("write");
     exit(errno);
   }
   fprintf(stderr, "[send_player] bytes written: %zd ", bytes_written);
   for (int i = 0; i < bytes_written; i++) {
-    fprintf(stderr, "%x", ((char *) &payload)[i]);
+    fprintf(stderr, "%x", ((char *) &data)[i]);
   }
   fprintf(stderr, "\n");
 
-  return(1);
+  return(0);
 }
 
-void client_request_players(void) {
+int client_request_players(void) {
   ssize_t bytes_written;
 
   if ((bytes_written = write(fd,
-                             REQUEST_PLAYERS,
-                             strlen(REQUEST_PLAYERS))) < 0) {
+                             WERLD_REQUEST_PLAYERS,
+                             strlen(WERLD_REQUEST_PLAYERS))) < 0) {
     perror("write");
     exit(errno);
   }
   fprintf(stderr, "[request_players] bytes written: %zd\n", bytes_written);
+
+  return(0);
 }
 
 int client_handle_response(void) {
   ssize_t bytes_read;
-  uint32_t event;
+  uint32_t response_type;
 
-  if ((bytes_read = read(fd, &event, sizeof(EVENT_HEADER_BUFSIZ))) < 0) {
+  if ((bytes_read = read(fd, &response_type, sizeof(WERLD_RESPONSE_TYPE_BUFSIZ))) < 0) {
     perror("read");
     exit(errno);
   }
@@ -144,7 +184,7 @@ int client_handle_response(void) {
     return(-1);
   }
 
-  if (event == EVENT_MESSAGE) {
+  if (response_type == WERLD_RESPONSE_TYPE_MESSAGE) {
     uint32_t message_length;
 
     if ((bytes_read = read(fd, &message_length, sizeof(uint32_t))) < 0) {
@@ -152,22 +192,20 @@ int client_handle_response(void) {
       exit(errno);
     }
 
-    fprintf(stderr, "[event_message] bytes read: %zd ", bytes_read);
+    if (bytes_read == 0) {
+      return(-1);
+    }
+
+    fprintf(stderr, "[response_type_message] bytes read: %zd ", bytes_read);
     for (int i = 0; i < bytes_read; i++) {
       fprintf(stderr, "%x", ((char *) &message_length)[i]);
     }
     fprintf(stderr, "\n");
 
-    if (bytes_read == 0) {
-      return(-1);
-    }
-
     char message[message_length + 1];
-    char event_message_payload[sizeof(message) + sizeof(struct player)];
+    char payload[sizeof(message) + sizeof(struct player)];
 
-    if ((bytes_read = read(fd,
-                           event_message_payload,
-                           sizeof(event_message_payload))) < 0) {
+    if ((bytes_read = read(fd, payload, sizeof(payload))) < 0) {
       perror("read");
       exit(errno);
     }
@@ -176,23 +214,26 @@ int client_handle_response(void) {
       return(-1);
     }
 
-    fprintf(stderr, "[event_message] bytes read: %zd ", bytes_read);
+    fprintf(stderr, "[response_type_message] bytes read: %zd ", bytes_read);
     for (int i = 0; i < bytes_read; i++) {
-      fprintf(stderr, "%x", event_message_payload[i]);
+      fprintf(stderr, "%x", payload[i]);
     }
     fprintf(stderr, "\n");
 
     struct player player;
 
-    memcpy(&player, event_message_payload, sizeof(struct player));
-    memcpy(message,
-           event_message_payload + sizeof(struct player),
-           sizeof(message) - 1);
-    message[sizeof(message)] = '\0';
+    memcpy(&player, payload, sizeof(struct player));
+    /*memcpy(message,*/
+           /*payload + sizeof(struct player),*/
+           /*sizeof(message) - 1);*/
+    /*message[sizeof(message)] = '\0';*/
+    strncpy(message,
+            payload + sizeof(struct player),
+            sizeof(message) - 1);
 
     ui_draw_player_list(player_list);
     ui_draw_player_with_message(player, message);
-  } else if (event == EVENT_PLAYERS) {
+  } else if (response_type == WERLD_RESPONSE_TYPE_PLAYERS) {
     uint32_t number_of_players;
 
     if ((bytes_read = read(fd, &number_of_players, sizeof(uint32_t))) < 0) {
@@ -200,21 +241,19 @@ int client_handle_response(void) {
       exit(errno);
     }
 
-    fprintf(stderr, "[event_players] bytes read: %zd ", bytes_read);
+    if (bytes_read == 0) {
+      return(-1);
+    }
+
+    fprintf(stderr, "[response_type_message] bytes read: %zd ", bytes_read);
     for (int i = 0; i < bytes_read; i++) {
       fprintf(stderr, "%x", ((char *) &number_of_players)[i]);
     }
     fprintf(stderr, "\n");
 
-    if (bytes_read == 0) {
-      return(-1);
-    }
+    char payload[number_of_players * sizeof(struct player)];
 
-    char event_players_payload[number_of_players * sizeof(struct player)];
-
-    if ((bytes_read = read(fd,
-                           event_players_payload,
-                           sizeof(event_players_payload))) < 0) {
+    if ((bytes_read = read(fd, payload, sizeof(payload))) < 0) {
       perror("read");
       exit(errno);
     }
@@ -223,13 +262,13 @@ int client_handle_response(void) {
       return(-1);
     }
 
-    fprintf(stderr, "[event_players] bytes read: %zd ", bytes_read);
+    fprintf(stderr, "[response_type_message] bytes read: %zd ", bytes_read);
     for (int i = 0; i < bytes_read; i++) {
-      fprintf(stderr, "%x", event_players_payload[i]);
+      fprintf(stderr, "%x", payload[i]);
     }
     fprintf(stderr, "\n");
 
-    player_list_update(&player_list, (void *) event_players_payload, number_of_players);
+    player_list_update(&player_list, (void *) payload, number_of_players);
 
     ui_draw_player_list(player_list);
     ui_draw_player(player);
@@ -238,26 +277,27 @@ int client_handle_response(void) {
   return(0);
 }
 
-void client_send_message(struct player player, const char *message) {
-  char payload[REQUEST_MESSAGE_BUFSIZ];
+int client_send_message(struct player player, const char *message) {
+  char data[WERLD_REQUEST_MESSAGE_SIZE(message)];
   ssize_t bytes_written;
 
-  void *offset = mempcpy(payload, REQUEST_MESSAGE, strlen(REQUEST_MESSAGE));
+  void *offset =
+    mempcpy(data, WERLD_REQUEST_MESSAGE, strlen(WERLD_REQUEST_MESSAGE));
   /* FIXME: Don't send entire player. */
   offset = mempcpy(offset, &player, sizeof(player));
   memcpy(offset, message, strlen(message));
 
-  ssize_t payload_size = strlen(REQUEST_MESSAGE) +
-                           sizeof(player) +
-                           strlen(message);
-
-  if ((bytes_written = write(fd, &payload, payload_size)) < 0) {
+  if ((bytes_written = write(fd,
+                             &data,
+                             WERLD_REQUEST_MESSAGE_SIZE(message))) < 0) {
     perror("write");
     exit(errno);
   }
   fprintf(stderr, "[send_message] bytes written: %zd ", bytes_written);
   for (int i = 0; i < bytes_written; i++) {
-    fprintf(stderr, "%x", ((char *) &payload)[i]);
+    fprintf(stderr, "%x", ((char *) &data)[i]);
   }
   fprintf(stderr, "\n");
+
+  return(0);
 }
