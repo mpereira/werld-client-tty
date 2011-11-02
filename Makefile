@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS  = -O2 -W -Wall -pedantic -ansi -std=c99 -g
+CFLAGS  = -O2 -W -Wall -pedantic -std=c99 -g -D_GNU_SOURCE
 LDFLAGS = -lncurses
 
 EXECUTABLE = werld_client
