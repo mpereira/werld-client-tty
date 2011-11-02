@@ -12,7 +12,11 @@
 #include "player_list.h"
 #include "ui.h"
 
+#ifdef WERLD_DEVELOPMENT
 #define WERLD_SERVER_ADDRESS "0.0.0.0"
+#else
+#define WERLD_SERVER_ADDRESS "server.werldonline.com"
+#endif
 #define WERLD_SERVER_PORT    "9876"
 
 #define WERLD_REQUEST_PLAYER     "player"
