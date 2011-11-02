@@ -3,7 +3,7 @@
 
 #include "player.h"
 
-#define WERLD_PLAYER_MESSAGE_BUFSIZ (140)
+#define WERLD_PLAYER_MESSAGE_BUFSIZ (80)
 
 extern int fd;
 
