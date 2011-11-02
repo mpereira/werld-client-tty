@@ -14,14 +14,12 @@ struct player {
   int x;
 };
 
-void player_initialize(struct player *,
-                       const int,
-                       const char *,
-                       const int,
-                       const int);
+extern struct player player;
+
+void player_malloc(struct player **);
+void player_initialize(struct player *, int, const char *, int, int);
+void player_cpy(struct player **, struct player *);
 void player_free(struct player *);
 void player_move(struct player *, enum movement);
-
-struct player player;
 
 #endif

@@ -38,7 +38,6 @@ int main(int argc, const char *argv[]) {
   int x = 10;
 
   player_initialize(&player, id, name, y, x);
-  ui_draw_player(player);
 
   if (werld_client_connect(player) == -1) {
     endwin();
@@ -52,8 +51,10 @@ int main(int argc, const char *argv[]) {
     return(-1);
   }
 
+  player_list_init(&player_list);
+  player_list_insert(&player_list, player);
+
   fd_set master_fds, read_fds;
-  extern int fd;
 
   FD_ZERO(&master_fds);
   FD_SET(fileno(stdin), &master_fds);
@@ -69,6 +70,7 @@ int main(int argc, const char *argv[]) {
       keyboard_event(wgetch(stdscr));
     } else if (FD_ISSET(fd, &read_fds)) {
       if (werld_client_handle_response() == -1) {
+        player_list_free(player_list);
         endwin();
         fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
         return(-1);

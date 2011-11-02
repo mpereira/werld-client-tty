@@ -5,48 +5,66 @@
 
 #include "player_list.h"
 
+struct player_list *player_list;
+
+static void player_list_malloc(struct player_list **player_list) {
+  if (!(*player_list = malloc(sizeof(struct player_list)))) {
+    perror("malloc");
+    exit(errno);
+  }
+}
+
 void player_list_init(struct player_list **player_list) {
   *player_list = NULL;
 }
 
 void player_list_free(struct player_list *player_list) {
-  for (; player_list; player_list = player_list->next) {
-    if (player_list->player) {
-      player_free(player_list->player);
+  struct player_list *current = player_list;
+  struct player_list *previous;
+
+  while(current) {
+    if (current->player) {
+      player_free(current->player);
     }
+    previous = current;
+    current = current->next;
+    free(previous);
   }
 }
 
-void player_list_fill(struct player_list **player_list,
-                      const struct player *players,
-                      const int number_of_players) {
+void player_list_update(struct player_list **player_list, const struct player *players, int number_of_players) {
   if (number_of_players <= 0) {
     return;
   }
 
-  if (!(*player_list = malloc(sizeof(**player_list)))) {
-    perror("malloc");
-    exit(errno);
-  }
-
-  struct player_list *iterator = *player_list;
+  player_list_free(*player_list);
+  player_list_init(player_list);
 
   for (int i = 0; i < number_of_players; i++) {
-    if (!(iterator->player = malloc(sizeof(struct player)))) {
-      perror("malloc");
-      exit(errno);
-    }
+    player_list_insert(player_list, players[i]);
+  }
+}
 
-    *(iterator->player) = players[i];
+/* FIXME: refactor this mess. */
+void player_list_insert(struct player_list **player_list, struct player player) {
+  struct player_list **iterator = player_list;
+  struct player_list *tmp = *iterator;
+  struct player_list *previous, *node;
 
-    if (i == number_of_players - 1) {
-      iterator->next = NULL;
-    } else {
-      if (!(iterator->next = malloc(sizeof(struct player_list)))) {
-        perror("malloc");
-        exit(errno);
-      }
-      iterator = iterator->next;
+  if (*iterator) {
+    while (tmp) {
+      previous = tmp;
+      tmp = tmp->next;
     }
+    player_list_malloc(&node);
+    player_malloc(&(node->player));
+    player_cpy(&(node->player), &player);
+    node->next = NULL;
+    previous->next = node;
+  } else {
+    player_list_malloc(iterator);
+    player_malloc(&((*iterator)->player));
+    player_cpy(&((*iterator)->player), &player);
+    (*iterator)->next = NULL;
   }
 }

@@ -10,15 +10,28 @@
 #include "ui.h"
 #include "werld_client.h"
 
+struct player player;
+
 void player_initialize(struct player *player,
-                       const int id,
+                       int id,
                        const char *name,
-                       const int y,
-                       const int x) {
+                       int y,
+                       int x) {
   player->id = id;
   strncpy(player->name, name, strlen(name));
   player->y = y;
   player->x = x;
+}
+
+void player_malloc(struct player **player) {
+  if (!(*player = malloc(sizeof(struct player)))) {
+    perror("malloc");
+    exit(errno);
+  }
+}
+
+void player_cpy(struct player **destination, struct player *source) {
+  memcpy(*destination, source, sizeof(struct player));
 }
 
 void player_free(struct player *player) {

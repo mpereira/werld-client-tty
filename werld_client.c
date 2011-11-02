@@ -16,6 +16,8 @@
 #include "ui.h"
 #include "werld_client.h"
 
+int fd;
+
 static void werld_client_register(const struct player player) {
   ssize_t bytes_written;
   char payload[REQUEST_REGISTER_BUFSIZ];
@@ -189,8 +191,8 @@ int werld_client_handle_response(void) {
            sizeof(message) - 1);
     message[sizeof(message)] = '\0';
 
+    ui_draw_player_list(player_list);
     ui_draw_player_with_message(player, message);
-    ui_draw_player(player);
   } else if (event == EVENT_PLAYERS) {
     uint32_t number_of_players;
 
@@ -228,13 +230,10 @@ int werld_client_handle_response(void) {
     }
     fprintf(stderr, "\n");
 
-    struct player_list *player_list;
-    player_list_init(&player_list);
-    player_list_fill(&player_list,
-                     (void *) event_players_payload,
-                     number_of_players);
+    player_list_update(&player_list, (void *) event_players_payload, number_of_players);
 
     ui_draw_player_list(player_list);
+    ui_draw_player(player);
   }
 
   return(0);

@@ -7,8 +7,6 @@
 #include "player.h"
 #include "werld_client.h"
 
-extern struct player player;
-
 #define MESSAGE_INPUT_Y 24
 #define MESSAGE_INPUT_X 0
 
@@ -18,6 +16,7 @@ void keyboard_event(int key) {
   switch (key) {
   case 'q':
     werld_client_disconnect();
+    player_list_free(player_list);
     endwin();
     exit(0);
   case '\n':

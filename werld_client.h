@@ -37,12 +37,12 @@
                                  sizeof(struct player) + \
                                  MESSAGE_BUFSIZ)
 
+extern int fd;
+
 int werld_client_connect(struct player);
 void werld_client_disconnect(void);
 int werld_client_send_player(struct player);
 void werld_client_request_players(void);
 int werld_client_handle_response(void);
-
-int fd;
 
 #endif
