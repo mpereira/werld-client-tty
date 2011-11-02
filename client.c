@@ -11,14 +11,14 @@
 #include <netdb.h>
 #include <unistd.h>
 
+#include "client.h"
 #include "player.h"
 #include "player_list.h"
 #include "ui.h"
-#include "werld_client.h"
 
 int fd;
 
-static void werld_client_register(struct player player) {
+static void client_register(struct player player) {
   ssize_t bytes_written;
   char payload[REQUEST_REGISTER_BUFSIZ];
 
@@ -36,7 +36,7 @@ static void werld_client_register(struct player player) {
   fprintf(stderr, "\n");
 }
 
-int werld_client_connect(struct player player) {
+int client_connect(struct player player) {
   int status;
   struct addrinfo hints;
   struct addrinfo *results;
@@ -45,7 +45,10 @@ int werld_client_connect(struct player player) {
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_STREAM;
 
-  if ((status = getaddrinfo(SERVER_ADDRESS, SERVER_PORT, &hints, &results))) {
+  if ((status = getaddrinfo(WERLD_SERVER_ADDRESS,
+                            WERLD_SERVER_PORT,
+                            &hints,
+                            &results))) {
     fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
     exit(errno);
   }
@@ -70,14 +73,14 @@ int werld_client_connect(struct player player) {
   freeaddrinfo(results);
 
   if (iterator) {
-    werld_client_register(player);
+    client_register(player);
     return(0);
   }
 
   return(-1);
 }
 
-void werld_client_disconnect(void) {
+void client_disconnect(void) {
   ssize_t bytes_written;
   char payload[REQUEST_UNREGISTER_BUFSIZ];
 
@@ -100,7 +103,7 @@ void werld_client_disconnect(void) {
   }
 }
 
-int werld_client_send_player(struct player player) {
+int client_send_player(struct player player) {
   ssize_t bytes_written;
   char payload[REQUEST_PLAYER_BUFSIZ];
 
@@ -120,7 +123,7 @@ int werld_client_send_player(struct player player) {
   return(1);
 }
 
-void werld_client_request_players(void) {
+void client_request_players(void) {
   ssize_t bytes_written;
 
   if ((bytes_written = write(fd,
@@ -132,7 +135,7 @@ void werld_client_request_players(void) {
   fprintf(stderr, "[request_players] bytes written: %zd\n", bytes_written);
 }
 
-int werld_client_handle_response(void) {
+int client_handle_response(void) {
   ssize_t bytes_read;
   uint32_t event;
 
@@ -239,7 +242,7 @@ int werld_client_handle_response(void) {
   return(0);
 }
 
-void werld_client_send_message(struct player player, const char *message) {
+void client_send_message(struct player player, const char *message) {
   char payload[REQUEST_MESSAGE_BUFSIZ];
   ssize_t bytes_written;
 

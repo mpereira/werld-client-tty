@@ -1,10 +1,10 @@
-#ifndef WERLD_CLIENT_WERLD_CLIENT_H
-#define WERLD_CLIENT_WERLD_CLIENT_H
+#ifndef WERLD_CLIENT_SERVER_H
+#define WERLD_CLIENT_SERVER_H
 
-#include "player_list.h"
+#include "player.h"
 
-#define SERVER_ADDRESS "0.0.0.0"
-#define SERVER_PORT    "9876"
+#define WERLD_SERVER_ADDRESS "0.0.0.0"
+#define WERLD_SERVER_PORT    "9876"
 
 #define MESSAGE_BUFSIZ      (140)
 
@@ -39,11 +39,11 @@
 
 extern int fd;
 
-int werld_client_connect(struct player);
-void werld_client_disconnect(void);
-int werld_client_send_player(struct player);
-void werld_client_send_message(struct player, const char *);
-void werld_client_request_players(void);
-int werld_client_handle_response(void);
+int client_connect(struct player);
+void client_disconnect(void);
+int client_send_player(struct player);
+void client_send_message(struct player, const char *);
+void client_request_players(void);
+int client_handle_response(void);
 
 #endif

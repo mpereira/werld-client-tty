@@ -7,10 +7,10 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "client.h"
 #include "keyboard.h"
 #include "player.h"
 #include "ui.h"
-#include "werld_client.h"
 
 int main(int argc, const char *argv[]) {
   char name[MAX_NAME_SIZE];
@@ -39,13 +39,13 @@ int main(int argc, const char *argv[]) {
 
   player_initialize(&player, id, name, y, x);
 
-  if (werld_client_connect(player) == -1) {
+  if (client_connect(player) == -1) {
     endwin();
     fprintf(stderr, "%s: failed to connect to the server\n", argv[0]);
     return(-1);
   }
 
-  if (werld_client_handle_response() == -1) {
+  if (client_handle_response() == -1) {
     endwin();
     fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
     return(-1);
@@ -69,7 +69,7 @@ int main(int argc, const char *argv[]) {
     if (FD_ISSET(fileno(stdin), &read_fds)) {
       keyboard_event(wgetch(stdscr));
     } else if (FD_ISSET(fd, &read_fds)) {
-      if (werld_client_handle_response() == -1) {
+      if (client_handle_response() == -1) {
         player_list_free(player_list);
         endwin();
         fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);

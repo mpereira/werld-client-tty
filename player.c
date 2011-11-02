@@ -4,10 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "client.h"
 #include "movement.h"
 #include "player.h"
 #include "ui.h"
-#include "werld_client.h"
 
 struct player player;
 
@@ -56,5 +56,5 @@ void player_move(struct player *player, enum movement movement) {
     break;
   }
   ui_draw_player(*player);
-  werld_client_send_player(*player);
+  client_send_player(*player);
 }

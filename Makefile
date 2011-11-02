@@ -8,7 +8,7 @@ SRC        = ${SRC_DIR}/main.c
 SRC_OBJECTS = ${SRC_DIR}/keyboard.o     \
               ${SRC_DIR}/ui.o           \
               ${SRC_DIR}/movement.o     \
-              ${SRC_DIR}/werld_client.o \
+              ${SRC_DIR}/client.o       \
               ${SRC_DIR}/player.o       \
               ${SRC_DIR}/player_list.o
 
