@@ -3,8 +3,6 @@
 
 #define MAX_NAME_SIZE 20
 
-#include <curses.h>
-
 #include "movement.h"
 
 struct player {

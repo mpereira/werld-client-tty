@@ -1,11 +1,11 @@
 #define _POSIX_SOURCE
 #include <curses.h>
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include "keyboard.h"
 #include "player.h"
@@ -17,7 +17,7 @@ int main(int argc, const char *argv[]) {
 
   initscr();
   raw();
-  keypad(stdscr, TRUE);
+  keypad(stdscr, true);
   curs_set(FALSE);
   clear();
   refresh();

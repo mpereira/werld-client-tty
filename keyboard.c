@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "keyboard.h"
 #include "movement.h"
 #include "player.h"
 #include "werld_client.h"

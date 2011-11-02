@@ -5,7 +5,7 @@
 #include "player.h"
 #include "player_list.h"
 
-void ui_draw_player(const struct player player) {
+void ui_draw_player(struct player player) {
   mvprintw(player.y - 1,
            (player.x - strlen(player.name) / 2) -1,
            "(%s)",
@@ -14,7 +14,7 @@ void ui_draw_player(const struct player player) {
   refresh();
 }
 
-void ui_draw_player_with_message(const struct player player, const char *message) {
+void ui_draw_player_with_message(struct player player, const char *message) {
   clear();
   mvprintw(player.y - 3,
            (player.x - strlen(message) / 2),
@@ -24,12 +24,12 @@ void ui_draw_player_with_message(const struct player player, const char *message
   refresh();
 }
 
-void ui_erase_player(const struct player player) {
+void ui_erase_player(struct player player) {
   clear();
   refresh();
 }
 
-void ui_redraw_player(const struct player player) {
+void ui_redraw_player(struct player player) {
   ui_erase_player(player);
   ui_draw_player(player);
 }

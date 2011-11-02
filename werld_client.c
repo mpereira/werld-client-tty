@@ -18,7 +18,7 @@
 
 int fd;
 
-static void werld_client_register(const struct player player) {
+static void werld_client_register(struct player player) {
   ssize_t bytes_written;
   char payload[REQUEST_REGISTER_BUFSIZ];
 
@@ -36,7 +36,7 @@ static void werld_client_register(const struct player player) {
   fprintf(stderr, "\n");
 }
 
-int werld_client_connect(const struct player player) {
+int werld_client_connect(struct player player) {
   int status;
   struct addrinfo hints;
   struct addrinfo *results;
@@ -239,7 +239,7 @@ int werld_client_handle_response(void) {
   return(0);
 }
 
-void werld_client_send_message(const struct player player, const char *message) {
+void werld_client_send_message(struct player player, const char *message) {
   char payload[REQUEST_MESSAGE_BUFSIZ];
   ssize_t bytes_written;
 

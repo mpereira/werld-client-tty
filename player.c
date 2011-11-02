@@ -6,7 +6,6 @@
 
 #include "movement.h"
 #include "player.h"
-#include "player_list.h"
 #include "ui.h"
 #include "werld_client.h"
 

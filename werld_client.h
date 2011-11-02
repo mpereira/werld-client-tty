@@ -42,6 +42,7 @@ extern int fd;
 int werld_client_connect(struct player);
 void werld_client_disconnect(void);
 int werld_client_send_player(struct player);
+void werld_client_send_message(struct player, const char *);
 void werld_client_request_players(void);
 int werld_client_handle_response(void);
 
