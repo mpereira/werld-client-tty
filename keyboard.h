@@ -1,5 +1,5 @@
-#ifndef WERLD_CLIENT_KEYBOARD_H
-#define WERLD_CLIENT_KEYBOARD_H
+#ifndef WERLD_KEYBOARD_H
+#define WERLD_KEYBOARD_H
 
 void keyboard_event();
 

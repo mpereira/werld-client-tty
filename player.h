@@ -1,5 +1,5 @@
-#ifndef WERLD_CLIENT_PLAYER_H
-#define WERLD_CLIENT_PLAYER_H
+#ifndef WERLD_PLAYER_H
+#define WERLD_PLAYER_H
 
 #define MAX_NAME_SIZE 20
 

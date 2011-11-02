@@ -1,5 +1,5 @@
-#ifndef WERLD_CLIENT_UI_H
-#define WERLD_CLIENT_UI_H
+#ifndef WERLD_UI_H
+#define WERLD_UI_H
 
 #include "player.h"
 #include "player_list.h"

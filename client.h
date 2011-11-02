@@ -1,5 +1,5 @@
-#ifndef WERLD_CLIENT_SERVER_H
-#define WERLD_CLIENT_SERVER_H
+#ifndef WERLD_CLIENT_H
+#define WERLD_CLIENT_H
 
 #include "player.h"
 

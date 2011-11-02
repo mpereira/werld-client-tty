@@ -1,5 +1,5 @@
-#ifndef WERLD_CLIENT_MOVEMENT_H
-#define WERLD_CLIENT_MOVEMENT_H
+#ifndef WERLD_MOVEMENT_H
+#define WERLD_MOVEMENT_H
 
 enum movement { LEFT, DOWN, UP, RIGHT };
 
