@@ -10,9 +10,14 @@
 #include "keyboard.h"
 #include "player.h"
 #include "ui.h"
+#include "werld_client.h"
 
 int main(int argc, const char *argv[]) {
   char name[WERLD_PLAYER_NAME_BUFSIZ];
+
+  /* FIXME: parse config options from command-line arguments. */
+  werld_client.log_level = WERLD_CLIENT_DEBUG;
+  werld_client.log_file = NULL;
 
   initscr();
   raw();

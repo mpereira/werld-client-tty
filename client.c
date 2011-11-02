@@ -11,6 +11,7 @@
 #include "player.h"
 #include "player_list.h"
 #include "ui.h"
+#include "werld_client.h"
 
 #ifdef WERLD_DEVELOPMENT
 #define WERLD_SERVER_ADDRESS "0.0.0.0"
@@ -63,11 +64,11 @@ static void client_register(struct player player) {
     perror("write");
     exit(errno);
   }
-  fprintf(stderr, "[register] bytes written: %zd ", bytes_written);
-  for (int i = 0; i < bytes_written; i++) {
-    fprintf(stderr, "%x", ((char *) data)[i]);
-  }
-  fprintf(stderr, "\n");
+  werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                          data,
+                          sizeof(data),
+                          "+register bytes written: %zd ",
+                          bytes_written);
 }
 
 int client_connect(struct player player) {
@@ -83,7 +84,7 @@ int client_connect(struct player player) {
                             WERLD_SERVER_PORT,
                             &hints,
                             &results))) {
-    fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
+    werld_client_log(WERLD_CLIENT_ERROR, "getaddrinfo: %s\n", gai_strerror(status));
     exit(errno);
   }
 
@@ -126,11 +127,12 @@ int client_disconnect(struct player player) {
     perror("write");
     exit(errno);
   }
-  fprintf(stderr, "[disconnect] bytes written: %zd ", bytes_written);
-  for (int i = 0; i < bytes_written; i++) {
-    fprintf(stderr, "%x", ((char *) &data)[i]);
-  }
-  fprintf(stderr, "\n");
+
+  werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                          data,
+                          sizeof(data),
+                          "+disconnect bytes written: %zd ",
+                          bytes_written);
 
   if (close(fd)) {
     perror("close");
@@ -152,11 +154,12 @@ int client_send_player(struct player player) {
     perror("write");
     exit(errno);
   }
-  fprintf(stderr, "[send_player] bytes written: %zd ", bytes_written);
-  for (int i = 0; i < bytes_written; i++) {
-    fprintf(stderr, "%x", ((char *) &data)[i]);
-  }
-  fprintf(stderr, "\n");
+
+  werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                          data,
+                          sizeof(data),
+                          "+send_player bytes written: %zd ",
+                          bytes_written);
 
   return(0);
 }
@@ -170,7 +173,10 @@ int client_request_players(void) {
     perror("write");
     exit(errno);
   }
-  fprintf(stderr, "[request_players] bytes written: %zd\n", bytes_written);
+
+  werld_client_log(WERLD_CLIENT_DEBUG,
+                   "+request_players bytes written: %zd ",
+                   bytes_written);
 
   return(0);
 }
@@ -202,11 +208,11 @@ int client_handle_response(void) {
       return(-1);
     }
 
-    fprintf(stderr, "[response_type_message] bytes read: %zd ", bytes_read);
-    for (int i = 0; i < bytes_read; i++) {
-      fprintf(stderr, "%x", ((char *) &message_length)[i]);
-    }
-    fprintf(stderr, "\n");
+    werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                            (char *) &message_length,
+                            sizeof(message_length),
+                            "+handle_response+message bytes read: %zd ",
+                            bytes_read);
 
     char message[message_length + 1];
     char payload[sizeof(message) + sizeof(struct player)];
@@ -220,22 +226,16 @@ int client_handle_response(void) {
       return(-1);
     }
 
-    fprintf(stderr, "[response_type_message] bytes read: %zd ", bytes_read);
-    for (int i = 0; i < bytes_read; i++) {
-      fprintf(stderr, "%x", payload[i]);
-    }
-    fprintf(stderr, "\n");
+    werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                            payload,
+                            sizeof(payload),
+                            "+handle_response+message bytes read: %zd ",
+                            bytes_read);
 
     struct player player;
 
     memcpy(&player, payload, sizeof(struct player));
-    /*memcpy(message,*/
-           /*payload + sizeof(struct player),*/
-           /*sizeof(message) - 1);*/
-    /*message[sizeof(message)] = '\0';*/
-    strncpy(message,
-            payload + sizeof(struct player),
-            sizeof(message) - 1);
+    strncpy(message, payload + sizeof(struct player), sizeof(message) - 1);
 
     ui_draw_player_list(player_list);
     ui_draw_player_with_message(player, message);
@@ -251,11 +251,11 @@ int client_handle_response(void) {
       return(-1);
     }
 
-    fprintf(stderr, "[response_type_message] bytes read: %zd ", bytes_read);
-    for (int i = 0; i < bytes_read; i++) {
-      fprintf(stderr, "%x", ((char *) &number_of_players)[i]);
-    }
-    fprintf(stderr, "\n");
+    werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                            (char *) &number_of_players,
+                            sizeof(number_of_players),
+                            "+handle_response+players bytes read: %zd ",
+                            bytes_read);
 
     char payload[number_of_players * sizeof(struct player)];
 
@@ -268,11 +268,11 @@ int client_handle_response(void) {
       return(-1);
     }
 
-    fprintf(stderr, "[response_type_message] bytes read: %zd ", bytes_read);
-    for (int i = 0; i < bytes_read; i++) {
-      fprintf(stderr, "%x", payload[i]);
-    }
-    fprintf(stderr, "\n");
+    werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                            payload,
+                            sizeof(payload),
+                            "+handle_response+players bytes read: %zd ",
+                            bytes_read);
 
     player_list_update(&player_list, (void *) payload, number_of_players);
 
@@ -299,11 +299,12 @@ int client_send_message(struct player player, const char *message) {
     perror("write");
     exit(errno);
   }
-  fprintf(stderr, "[send_message] bytes written: %zd ", bytes_written);
-  for (int i = 0; i < bytes_written; i++) {
-    fprintf(stderr, "%x", ((char *) &data)[i]);
-  }
-  fprintf(stderr, "\n");
+
+  werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                          data,
+                          sizeof(data),
+                          "+send_message bytes written: %zd ",
+                          bytes_written);
 
   return(0);
 }
