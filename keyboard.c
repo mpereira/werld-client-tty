@@ -15,7 +15,7 @@ void keyboard_event(int key) {
 
   switch (key) {
   case 'q':
-    client_disconnect();
+    client_disconnect(player);
     player_list_free(player_list);
     endwin();
     exit(0);

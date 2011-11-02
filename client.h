@@ -40,7 +40,7 @@
 extern int fd;
 
 int client_connect(struct player);
-void client_disconnect(void);
+void client_disconnect(struct player);
 int client_send_player(struct player);
 void client_send_message(struct player, const char *);
 void client_request_players(void);

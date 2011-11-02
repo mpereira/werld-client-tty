@@ -76,7 +76,7 @@ int client_connect(struct player player) {
   return(-1);
 }
 
-void client_disconnect(void) {
+void client_disconnect(struct player player) {
   ssize_t bytes_written;
   char payload[REQUEST_UNREGISTER_BUFSIZ];
 

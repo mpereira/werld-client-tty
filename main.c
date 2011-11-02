@@ -46,6 +46,7 @@ int main(int argc, const char *argv[]) {
   }
 
   if (client_handle_response() == -1) {
+    client_disconnect(player);
     endwin();
     fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
     return(-1);
@@ -70,6 +71,7 @@ int main(int argc, const char *argv[]) {
       keyboard_event(wgetch(stdscr));
     } else if (FD_ISSET(fd, &read_fds)) {
       if (client_handle_response() == -1) {
+        client_disconnect(player);
         player_list_free(player_list);
         endwin();
         fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
