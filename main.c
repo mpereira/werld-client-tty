@@ -18,7 +18,7 @@ int main(int argc, const char *argv[]) {
   initscr();
   raw();
   keypad(stdscr, true);
-  curs_set(FALSE);
+  curs_set(false);
   clear();
   refresh();
 

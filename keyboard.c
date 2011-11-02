@@ -21,12 +21,14 @@ void keyboard_event(int key) {
     exit(0);
   case '\n':
     echo();
+    curs_set(true);
     mvwgetnstr(stdscr,
                MESSAGE_INPUT_Y,
                MESSAGE_INPUT_X,
                message,
                sizeof(message) - 1);
     client_send_message(player, message);
+    curs_set(false);
     noecho();
     break;
   case 'h':
