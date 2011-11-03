@@ -45,14 +45,18 @@ int main(int argc, const char *argv[]) {
 
   if (client_connect(player) == -1) {
     endwin();
-    fprintf(stderr, "%s: failed to connect to the server\n", argv[0]);
+    werld_client_log(WERLD_CLIENT_INFO,
+                     "%s: failed to connect to the server\n",
+                     argv[0]);
     return(-1);
   }
 
   if (client_handle_response() == -1) {
     client_disconnect(player);
     endwin();
-    fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
+    werld_client_log(WERLD_CLIENT_INFO,
+                     "%s: connection to the server has been lost\n",
+                     argv[0]);
     return(-1);
   }
 
@@ -78,7 +82,9 @@ int main(int argc, const char *argv[]) {
         client_disconnect(player);
         player_list_free(player_list);
         endwin();
-        fprintf(stderr, "%s: connection to the server has been lost\n", argv[0]);
+        werld_client_log(WERLD_CLIENT_INFO,
+                         "%s: connection to the server has been lost\n",
+                         argv[0]);
         return(-1);
       }
     }
