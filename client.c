@@ -66,7 +66,6 @@ static void client_register(struct player player) {
   }
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           data,
-                          sizeof(data),
                           "+register bytes written: %zd ",
                           bytes_written);
 }
@@ -130,7 +129,6 @@ int client_disconnect(struct player player) {
 
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           data,
-                          sizeof(data),
                           "+disconnect bytes written: %zd ",
                           bytes_written);
 
@@ -157,7 +155,6 @@ int client_send_player(struct player player) {
 
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           data,
-                          sizeof(data),
                           "+send_player bytes written: %zd ",
                           bytes_written);
 
@@ -210,7 +207,6 @@ int client_handle_response(void) {
 
     werld_client_log_binary(WERLD_CLIENT_DEBUG,
                             (char *) &message_length,
-                            sizeof(message_length),
                             "+handle_response+message bytes read: %zd ",
                             bytes_read);
 
@@ -228,7 +224,6 @@ int client_handle_response(void) {
 
     werld_client_log_binary(WERLD_CLIENT_DEBUG,
                             payload,
-                            sizeof(payload),
                             "+handle_response+message bytes read: %zd ",
                             bytes_read);
 
@@ -253,7 +248,6 @@ int client_handle_response(void) {
 
     werld_client_log_binary(WERLD_CLIENT_DEBUG,
                             (char *) &number_of_players,
-                            sizeof(number_of_players),
                             "+handle_response+players bytes read: %zd ",
                             bytes_read);
 
@@ -270,7 +264,6 @@ int client_handle_response(void) {
 
     werld_client_log_binary(WERLD_CLIENT_DEBUG,
                             payload,
-                            sizeof(payload),
                             "+handle_response+players bytes read: %zd ",
                             bytes_read);
 
@@ -302,7 +295,6 @@ int client_send_message(struct player player, const char *message) {
 
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           data,
-                          sizeof(data),
                           "+send_message bytes written: %zd ",
                           bytes_written);
 

@@ -32,7 +32,7 @@ void werld_client_log(int level, const char *fmt, ...) {
   fflush(log_file);
 }
 
-void werld_client_log_binary(int level, const char binary[], size_t binary_size, char *fmt, ...) {
+void _werld_client_log_binary(int level, const char binary[], size_t binary_size, char *fmt, ...) {
   FILE *log_file;
   char message[WERLD_LOG_MESSAGE_BUFSIZ];
   va_list ap;
