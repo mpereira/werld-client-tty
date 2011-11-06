@@ -61,8 +61,10 @@ int main(int argc, const char *argv[]) {
     return(-1);
   }
 
-  player_list_init(&player_list);
-  player_list_insert(&player_list, player);
+  player_message_list_init(&(werld_client.player_message_list));
+
+  player_list_init(&(werld_client.player_list));
+  player_list_insert(&(werld_client.player_list), player);
 
   fd_set master_fds, read_fds;
 
@@ -81,7 +83,7 @@ int main(int argc, const char *argv[]) {
     } else if (FD_ISSET(fd, &read_fds)) {
       if (client_handle_response() == -1) {
         client_disconnect(player);
-        player_list_free(player_list);
+        player_list_free(werld_client.player_list);
         endwin();
         werld_client_log(WERLD_CLIENT_INFO,
                          "%s: connection to the server has been lost\n",

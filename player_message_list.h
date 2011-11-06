@@ -7,8 +7,6 @@ struct player_message_list {
   struct player_message_list *next;
 };
 
-extern struct player_message_list *player_message_list;
-
 void player_message_list_malloc(struct player_message_list **);
 void player_message_list_init(struct player_message_list **);
 int player_message_list_add(struct player_message_list **, const char *, int);

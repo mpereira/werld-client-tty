@@ -14,9 +14,11 @@
   _werld_client_log_binary(level, binary, sizeof(binary), fmt, ## __VA_ARGS__)
 
 struct werld_client {
-  int log_level;
   char *log_file;
+  int log_level;
   double player_messages_lifetime;
+  struct player_list *player_list;
+  struct player_message_list *player_message_list;
 };
 
 extern char *werld_client_log_level[];

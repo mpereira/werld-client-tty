@@ -6,6 +6,7 @@
 #include "movement.h"
 #include "player.h"
 #include "player_list.h"
+#include "werld_client.h"
 
 #define WERLD_MESSAGE_INPUT_Y 22
 #define WERLD_MESSAGE_INPUT_X 0
@@ -16,7 +17,7 @@ void keyboard_event(int key) {
   switch (key) {
   case 'q':
     client_disconnect(player);
-    player_list_free(player_list);
+    player_list_free(werld_client.player_list);
     endwin();
     exit(0);
   case '\n':

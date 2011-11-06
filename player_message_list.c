@@ -7,8 +7,6 @@
 #include "player.h"
 #include "player_message_list.h"
 
-struct player_message_list *player_message_list;
-
 void player_message_list_malloc(struct player_message_list **player_message_list) {
   if (!(*player_message_list = malloc(sizeof(struct player_message_list)))) {
     perror("malloc");
