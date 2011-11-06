@@ -16,6 +16,7 @@
 struct werld_client {
   int log_level;
   char *log_file;
+  double player_messages_lifetime;
 };
 
 extern char *werld_client_log_level[];

@@ -18,6 +18,7 @@ int main(int argc, const char *argv[]) {
   /* FIXME: parse config options from command-line arguments. */
   werld_client.log_level = WERLD_CLIENT_DEBUG;
   werld_client.log_file = NULL;
+  werld_client.player_messages_lifetime = 3;
 
   initscr();
   raw();
