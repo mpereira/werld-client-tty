@@ -1,0 +1,29 @@
+TODO
+* discover why invalid data is being intermitently sent on
+  werld_client_register()
+
+* don't allow players to walk through each other
+
+* create status bar
+
+* create message bar
+
+* iterate on read()s and write()s and make sure all data is transmitted
+
+* investigate whether or not it's possible to refactor player_message_list and
+  message_list into one module, where the list would actually be a queue and
+  each node would have the player's id.
+
+  struct message_queue {
+    char *message;
+    int player_id;
+    time_t created_at;
+    struct message_queue *next;
+  }
+
+  This would decrease a lot of complexity.
+
+DONE
+* handle disconnect responses (0 bytes) gracefully
+* send event on disconnect, so that other clients see you disapear
+* make werld_client_handle_response() delegate responses
