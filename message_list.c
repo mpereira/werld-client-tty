@@ -2,6 +2,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "client.h"
 #include "message_list.h"
@@ -28,7 +29,9 @@ void message_list_malloc(struct message_list **message_list) {
   }
 }
 
-int message_list_add(struct message_list **message_list, const char *message) {
+int message_list_add(struct message_list **message_list,
+                     const char *message,
+                     time_t created_at) {
   size_t size;
 
   if (!*message_list) {
@@ -37,6 +40,7 @@ int message_list_add(struct message_list **message_list, const char *message) {
     (*message_list)->next = NULL;
     size = message_list_malloc_message(&((*message_list)->message), message);
     strncpy((*message_list)->message, message, size);
+    (*message_list)->created_at = created_at;
     return(1);
   }
 
@@ -49,6 +53,7 @@ int message_list_add(struct message_list **message_list, const char *message) {
   iterator->next->next = NULL;
   size = message_list_malloc_message(&(iterator->next->message), message);
   strncpy(iterator->next->message, message, size);
+  iterator->next->created_at = created_at;
 
   return(1);
 }

@@ -1,8 +1,10 @@
 #include <errno.h>
 #include <malloc.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "message_list.h"
+#include "player.h"
 #include "player_message_list.h"
 
 struct player_message_list *player_message_list;
@@ -21,12 +23,15 @@ void player_message_list_init(struct player_message_list **player_message_list) 
 int player_message_list_add(struct player_message_list **player_message_list,
                             const char *message,
                             int player_id) {
+  time_t now;
+  time(&now);
+
   if (!*player_message_list) {
     player_message_list_malloc(player_message_list);
     (*player_message_list)->player_id = player_id;
     (*player_message_list)->message_list = NULL;
     (*player_message_list)->next = NULL;
-    return(message_list_add(&((*player_message_list)->message_list), message));
+    return(message_list_add(&((*player_message_list)->message_list), message, now));
   }
 
   struct player_message_list *iterator = *player_message_list;
@@ -35,7 +40,7 @@ int player_message_list_add(struct player_message_list **player_message_list,
   for (; iterator; iterator = iterator->next) {
     previous = iterator;
     if (iterator->player_id == player_id) {
-      return(message_list_add(&(iterator->message_list), message));
+      return(message_list_add(&(iterator->message_list), message, now));
     }
   }
 
@@ -43,7 +48,7 @@ int player_message_list_add(struct player_message_list **player_message_list,
   previous->next->player_id = player_id;
   previous->next->message_list = NULL;
   previous->next->next = NULL;
-  return(message_list_add(&(previous->next->message_list), message));
+  return(message_list_add(&(previous->next->message_list), message, now));
 }
 
 int player_message_list_remove(struct player_message_list **player_message_list,
