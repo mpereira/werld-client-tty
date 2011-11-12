@@ -40,6 +40,7 @@ void keyboard_event(int key) {
   case KEY_UP:
   case KEY_RIGHT:
     player_move(&player, movement_direction(key));
+    refresh();
     break;
   default:
     break;

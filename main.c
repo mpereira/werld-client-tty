@@ -23,11 +23,8 @@ int main(int argc, const char *argv[]) {
   raw();
   keypad(stdscr, true);
   curs_set(false);
-  clear();
-  refresh();
 
   printw("What's your name? ");
-  refresh();
   wgetnstr(stdscr, name, sizeof(name));
 
   noecho();
