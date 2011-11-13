@@ -14,7 +14,7 @@ void keyboard_event(int key) {
   char message[WERLD_PLAYER_MESSAGE_BUFSIZ];
 
   if (key == 'q' || key == 'Q') {
-    client_disconnect(player);
+    client_disconnect(werld_client.player);
     player_list_free(werld_client.player_list);
     endwin();
     exit(0);
@@ -24,7 +24,7 @@ void keyboard_event(int key) {
     case '\n':
       /* FIXME: make this asynchronous. */
       message_bar_getstr(werld_client.message_bar, message);
-      client_send_message(player, message);
+      client_send_message(werld_client.player, message);
       break;
     case 'h':
     case 'j':
@@ -34,7 +34,7 @@ void keyboard_event(int key) {
     case KEY_DOWN:
     case KEY_UP:
     case KEY_RIGHT:
-      player_move(&player, movement_direction(key));
+      player_move(&(werld_client.player), movement_direction(key));
       refresh();
       break;
     case KEY_RESIZE:

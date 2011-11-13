@@ -4,6 +4,9 @@
 #include <curses.h>
 #include <stdarg.h>
 
+#include "player.h"
+#include "player_list.h"
+
 #define WERLD_LOG_MESSAGE_BUFSIZ 1024
 #define WERLD_BINARY_STRING_BUFSIZ 896
 
@@ -19,6 +22,7 @@ struct werld_client {
   char *log_file;
   double player_messages_lifetime;
   int log_level;
+  struct player player;
   struct player_list *player_list;
 };
 

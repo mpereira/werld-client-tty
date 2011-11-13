@@ -9,8 +9,6 @@
 #include "player.h"
 #include "ui.h"
 
-struct player player;
-
 void player_initialize(struct player *player,
                        int id,
                        const char *name,
