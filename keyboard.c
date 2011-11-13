@@ -9,9 +9,6 @@
 #include "player_list.h"
 #include "werld_client.h"
 
-#define WERLD_MESSAGE_INPUT_Y 22
-#define WERLD_MESSAGE_INPUT_X 0
-
 void keyboard_event(int key) {
   char message[WERLD_PLAYER_MESSAGE_BUFSIZ];
 
