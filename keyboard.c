@@ -22,6 +22,7 @@ void keyboard_event(int key) {
     endwin();
     exit(0);
   case '\n':
+    /* FIXME: make this asynchronous. */
     message_bar_getstr(werld_client.message_bar, message);
     client_send_message(player, message);
     break;
