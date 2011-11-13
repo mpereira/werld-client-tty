@@ -8,12 +8,15 @@
 
 #include "client.h"
 #include "keyboard.h"
+#include "message_bar.h"
 #include "player.h"
 #include "ui.h"
+#include "tty.h"
 #include "werld_client.h"
 
 int main(int argc, const char *argv[]) {
   char name[WERLD_PLAYER_NAME_BUFSIZ];
+  int key;
 
   /* FIXME: parse config options from command-line arguments. */
   werld_client.log_level = WERLD_CLIENT_DEBUG;
@@ -24,16 +27,35 @@ int main(int argc, const char *argv[]) {
   raw();
   keypad(stdscr, true);
   curs_set(false);
-  clear();
-  refresh();
 
-  printw("What's your name? ");
+  while (!tty_term_size_ok()) {
+    clear();
+    mvaddstr(1, 1, WERLD_SMALL_TERM_MSG);
+    if ((key = getch()) == 'q' || key == 'Q') {
+      endwin();
+      return(0);
+    }
+    refresh();
+  }
+
+  /* FIXME: make this resistant to terminal resizing. */
+  clear();
+  mvaddstr(0, 0, "What's your name? ");
   refresh();
   wgetnstr(stdscr, name, sizeof(name));
 
   noecho();
   clear();
   refresh();
+
+  message_bar_init(&(werld_client.message_bar));
+
+  if (has_colors()) {
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLUE);
+    wbkgd(werld_client.message_bar, COLOR_PAIR(1));
+  }
+  wrefresh(werld_client.message_bar);
 
   /*id = server_get_id();*/
   int id = 1;

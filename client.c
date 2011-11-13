@@ -230,10 +230,10 @@ int client_handle_response(void) {
     struct player player;
 
     memcpy(&player, payload, sizeof(struct player));
-    strncpy(message, payload + sizeof(struct player), sizeof(message) - 1);
+    strncpy(message, payload + sizeof(struct player), sizeof(message));
 
-    ui_draw_player_list(werld_client.player_list);
     ui_draw_player_with_message(player, message);
+    refresh();
   } else if (response_type == WERLD_RESPONSE_TYPE_PLAYERS) {
     uint32_t number_of_players;
 
@@ -267,10 +267,10 @@ int client_handle_response(void) {
                             "+handle_response+players bytes read: %zd ",
                             bytes_read);
 
+    ui_erase_player_list(werld_client.player_list);
     player_list_update(&(werld_client.player_list), (void *) payload, number_of_players);
-
     ui_draw_player_list(werld_client.player_list);
-    ui_draw_player(player);
+    refresh();
   }
 
   return(0);
