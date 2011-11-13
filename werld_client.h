@@ -21,6 +21,7 @@ struct werld_client {
   WINDOW *message_bar;
   char *log_file;
   double player_messages_lifetime;
+  int fd;
   int log_level;
   struct player player;
   struct player_list *player_list;

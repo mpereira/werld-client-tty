@@ -5,8 +5,6 @@
 
 #define WERLD_PLAYER_MESSAGE_BUFSIZ (80)
 
-extern int fd;
-
 int client_connect(struct player);
 int client_disconnect(struct player);
 int client_send_player(struct player);

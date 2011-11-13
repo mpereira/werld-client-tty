@@ -83,17 +83,17 @@ int main(int argc, const char *argv[]) {
 
   FD_ZERO(&master_fds);
   FD_SET(fileno(stdin), &master_fds);
-  FD_SET(fd, &master_fds);
+  FD_SET(werld_client.fd, &master_fds);
 
   do {
     read_fds = master_fds;
-    if (select(fd + 1, &read_fds, NULL, NULL, NULL) == -1) {
+    if (select(werld_client.fd + 1, &read_fds, NULL, NULL, NULL) == -1) {
       perror("select");
       continue;
     }
     if (FD_ISSET(fileno(stdin), &read_fds)) {
       keyboard_event(wgetch(stdscr));
-    } else if (FD_ISSET(fd, &read_fds)) {
+    } else if (FD_ISSET(werld_client.fd, &read_fds)) {
       if (client_handle_response() == -1) {
         client_disconnect(werld_client.player);
         player_list_free(werld_client.player_list);
