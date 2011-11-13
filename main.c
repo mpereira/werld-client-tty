@@ -83,8 +83,6 @@ int main(int argc, const char *argv[]) {
     return(-1);
   }
 
-  player_message_list_init(&(werld_client.player_message_list));
-
   player_list_init(&(werld_client.player_list));
   player_list_insert(&(werld_client.player_list), player);
 

@@ -20,7 +20,6 @@ struct werld_client {
   double player_messages_lifetime;
   int log_level;
   struct player_list *player_list;
-  struct player_message_list *player_message_list;
 };
 
 extern char *werld_client_log_level[];

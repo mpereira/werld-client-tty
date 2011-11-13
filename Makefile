@@ -6,17 +6,16 @@ EXECUTABLE  = werld_client
 SRC_DIR     = .
 SRC         = $(SRC_DIR)/main.c
 SRC_OBJECTS = \
-              $(SRC_DIR)/client.o              \
-              $(SRC_DIR)/keyboard.o            \
-              $(SRC_DIR)/message_bar.o         \
-              $(SRC_DIR)/message_list.o        \
-              $(SRC_DIR)/movement.o            \
-              $(SRC_DIR)/player.o              \
-              $(SRC_DIR)/player_list.o         \
-              $(SRC_DIR)/player_message_list.o \
-              $(SRC_DIR)/tty.o                 \
-              $(SRC_DIR)/ui.o                  \
-              $(SRC_DIR)/werld_client.o        \
+              $(SRC_DIR)/client.o       \
+              $(SRC_DIR)/keyboard.o     \
+              $(SRC_DIR)/message_bar.o  \
+              $(SRC_DIR)/message_list.o \
+              $(SRC_DIR)/movement.o     \
+              $(SRC_DIR)/player.o       \
+              $(SRC_DIR)/player_list.o  \
+              $(SRC_DIR)/tty.o          \
+              $(SRC_DIR)/ui.o           \
+              $(SRC_DIR)/werld_client.o \
 
 ifeq ($(WERLD_ENV), development)
   CFLAGS += -DWERLD_DEVELOPMENT
