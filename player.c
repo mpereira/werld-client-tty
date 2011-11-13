@@ -29,10 +29,6 @@ void player_malloc(struct player **player) {
   }
 }
 
-void player_cpy(struct player **destination, struct player *source) {
-  memcpy(*destination, source, sizeof(struct player));
-}
-
 void player_free(struct player *player) {
   if (player) {
     free(player);
