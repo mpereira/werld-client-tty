@@ -63,6 +63,18 @@ int player_message_list_remove(struct player_message_list **player_message_list,
   return(0);
 }
 
+const struct player_message_list *
+player_message_list_find_by_player(struct player_message_list *player_message_list,
+                                   struct player player) {
+  for (; player_message_list; player_message_list = player_message_list->next) {
+    if (player_message_list->player_id == player.id) {
+      return(player_message_list);
+    }
+  }
+
+  return(NULL);
+}
+
 void player_message_list_free(struct player_message_list *player_message_list) {
   struct player_message_list *tmp;
 

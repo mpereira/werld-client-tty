@@ -7,11 +7,14 @@
 #include "movement.h"
 #include "player.h"
 #include "player_list.h"
+#include "player_message_list.h"
 #include "tty.h"
+#include "ui.h"
 #include "werld_client.h"
 
 void keyboard_event(int key) {
   char message[WERLD_PLAYER_MESSAGE_BUFSIZ];
+  const struct player_message_list *player_message_list;
 
   if (key == 'q' || key == 'Q') {
     client_disconnect(player);
@@ -35,6 +38,8 @@ void keyboard_event(int key) {
     case KEY_UP:
     case KEY_RIGHT:
       player_move(&player, movement_direction(key));
+      player_message_list = player_message_list_find_by_player(werld_client.player_message_list, player);
+      ui_draw_player_message_list(player_message_list);
       refresh();
       break;
     case KEY_RESIZE:

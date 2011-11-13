@@ -5,7 +5,7 @@
 
 #include "werld_client.h"
 
-char *werld_client_log_level[] = { "debug", "error", "info" };
+static char *werld_client_log_level[] = { "debug", "error", "info" };
 
 struct werld_client werld_client;
 

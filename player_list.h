@@ -14,5 +14,6 @@ void player_list_init(struct player_list **);
 void player_list_free(struct player_list *);
 void player_list_update(struct player_list **, const struct player *, int);
 void player_list_insert(struct player_list **, struct player);
+const struct player_list *player_list_find_by_player_id(struct player_list *, int);
 
 #endif

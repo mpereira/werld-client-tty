@@ -19,11 +19,11 @@ struct werld_client {
   char *log_file;
   double player_messages_lifetime;
   int log_level;
+  int message_handler_fds[2];
   struct player_list *player_list;
   struct player_message_list *player_message_list;
 };
 
-extern char *werld_client_log_level[];
 extern struct werld_client werld_client;
 
 void werld_client_log(int, const char *, ...);

@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include "client.h"
+#include "message_handler.h"
 #include "player.h"
 #include "player_list.h"
 #include "ui.h"
@@ -230,9 +231,12 @@ int client_handle_response(void) {
     struct player player;
 
     memcpy(&player, payload, sizeof(struct player));
-    strncpy(message, payload + sizeof(struct player), sizeof(message));
+    strncpy(message, payload + sizeof(struct player), message_length);
+    message[message_length] = '\0';
 
-    ui_draw_player_with_message(player, message);
+    message_handler_handle_incoming_message(&player, message);
+    struct player_message_list *player_message_list = player_message_list_find_by_player(werld_client.player_message_list, player);
+    ui_draw_player_message_list(player_message_list);
     refresh();
   } else if (response_type == WERLD_RESPONSE_TYPE_PLAYERS) {
     uint32_t number_of_players;

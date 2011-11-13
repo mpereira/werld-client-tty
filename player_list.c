@@ -68,3 +68,12 @@ void player_list_insert(struct player_list **player_list, struct player player) 
     (*iterator)->next = NULL;
   }
 }
+
+const struct player_list *player_list_find_by_player_id(struct player_list *player_list, int player_id) {
+  for (; player_list; player_list = player_list->next) {
+    if (player_list->player && player_list->player->id == player_id) {
+      return(player_list);
+    }
+  }
+  return(NULL);
+}
