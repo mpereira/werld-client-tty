@@ -230,7 +230,7 @@ int client_handle_response(void) {
     struct player player;
 
     memcpy(&player, payload, sizeof(struct player));
-    strncpy(message, payload + sizeof(struct player), sizeof(message) - 1);
+    strncpy(message, payload + sizeof(struct player), sizeof(message));
 
     ui_draw_player_with_message(player, message);
     refresh();
