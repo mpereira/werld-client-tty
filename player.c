@@ -12,8 +12,8 @@
 void player_initialize(struct player *player,
                        int id,
                        const char *name,
-                       int y,
-                       int x) {
+                       uint32_t y,
+                       uint32_t x) {
   player->id = id;
   strncpy(player->name, name, strlen(name));
   player->y = y;
