@@ -1,6 +1,7 @@
 #ifndef WERLD_WERLD_CLIENT_H
 #define WERLD_WERLD_CLIENT_H
 
+#include <curses.h>
 #include <stdarg.h>
 
 #define WERLD_LOG_MESSAGE_BUFSIZ 1024
@@ -16,6 +17,7 @@
 struct werld_client {
   int log_level;
   char *log_file;
+  WINDOW *message_bar;
 };
 
 extern char *werld_client_log_level[];

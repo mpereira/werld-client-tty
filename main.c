@@ -8,6 +8,7 @@
 
 #include "client.h"
 #include "keyboard.h"
+#include "message_bar.h"
 #include "player.h"
 #include "ui.h"
 #include "werld_client.h"
@@ -30,6 +31,15 @@ int main(int argc, const char *argv[]) {
   noecho();
   clear();
   refresh();
+
+  message_bar_init(&(werld_client.message_bar));
+
+  if (has_colors()) {
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLUE);
+    wbkgd(werld_client.message_bar, COLOR_PAIR(1));
+  }
+  wrefresh(werld_client.message_bar);
 
   /*id = server_get_id();*/
   int id = 1;

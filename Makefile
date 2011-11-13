@@ -8,6 +8,7 @@ SRC         = $(SRC_DIR)/main.c
 SRC_OBJECTS = \
               $(SRC_DIR)/client.o       \
               $(SRC_DIR)/keyboard.o     \
+              $(SRC_DIR)/message_bar.o  \
               $(SRC_DIR)/movement.o     \
               $(SRC_DIR)/player.o       \
               $(SRC_DIR)/player_list.o  \
