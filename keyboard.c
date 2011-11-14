@@ -1,12 +1,10 @@
 #include <curses.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "client.h"
 #include "message_bar.h"
 #include "movement.h"
 #include "player.h"
-#include "player_list.h"
 #include "tty.h"
 #include "werld_client.h"
 

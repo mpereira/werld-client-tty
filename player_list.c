@@ -7,8 +7,6 @@
 #include "player_list.h"
 #include "message_list.h"
 
-struct player_list *player_list;
-
 void player_list_malloc(struct player_list **player_list) {
   if (!(*player_list = malloc(sizeof(struct player_list)))) {
     perror("malloc");
@@ -32,7 +30,7 @@ void player_list_free(struct player_list *player_list) {
   }
 }
 
-void player_list_add_player(struct player_list **player_list, const struct player player) {
+void player_list_add_player(struct player_list **player_list, struct player player) {
   struct player_list **new;
   struct player_list *iterator = *player_list;
   struct player_list *tmp;
@@ -54,7 +52,7 @@ void player_list_add_player(struct player_list **player_list, const struct playe
   (*new)->next = NULL;
 }
 
-void player_list_update_player(struct player_list **player_list, const struct player player) {
+void player_list_update_player(struct player_list **player_list, struct player player) {
   player_list_add_player(player_list, player);
 }
 

@@ -1,16 +1,11 @@
 #include <curses.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/time.h>
 #include <sys/types.h>
-#include <unistd.h>
 
 #include "client.h"
 #include "keyboard.h"
 #include "message_bar.h"
 #include "player.h"
-#include "ui.h"
 #include "tty.h"
 #include "werld_client.h"
 

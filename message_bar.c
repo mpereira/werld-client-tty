@@ -3,13 +3,13 @@
 #include "client.h"
 #include "message_bar.h"
 
-static int _message_bar_columns(void) {
+int _message_bar_columns(void) {
   int y, x;
   getmaxyx(stdscr, y, x);
   return(x);
 }
 
-static int _message_bar_y(void) {
+int _message_bar_y(void) {
   int y, x;
   getmaxyx(stdscr, y, x);
   return(y - 2);

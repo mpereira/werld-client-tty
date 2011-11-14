@@ -1,6 +1,5 @@
 #include <errno.h>
 #include <netdb.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
@@ -9,29 +8,27 @@
 
 #include "client.h"
 #include "player.h"
-#include "player_list.h"
 #include "ui.h"
 #include "werld_client.h"
 
 #ifdef WERLD_DEVELOPMENT
-#define WERLD_SERVER_ADDRESS "0.0.0.0"
+static const char *WERLD_SERVER_ADDRESS = "0.0.0.0";
 #else
-#define WERLD_SERVER_ADDRESS "server.werldonline.com"
+static const char *WERLD_SERVER_ADDRESS = "server.werldonline.com";
 #endif
-#define WERLD_SERVER_PORT    "9876"
+static const char *WERLD_SERVER_PORT = "9876";
 
-#define WERLD_REQUEST_PLAYER     "player"
-#define WERLD_REQUEST_PLAYERS    "players"
-#define WERLD_REQUEST_REGISTER   "register"
-#define WERLD_REQUEST_UNREGISTER "unregister"
-#define WERLD_REQUEST_MESSAGE    "message"
+static const char *WERLD_REQUEST_PLAYER     = "player";
+static const char *WERLD_REQUEST_PLAYERS    = "players";
+static const char *WERLD_REQUEST_REGISTER   = "register";
+static const char *WERLD_REQUEST_UNREGISTER = "unregister";
+static const char *WERLD_REQUEST_MESSAGE    = "message";
 
-#define WERLD_RESPONSE_TYPE_BUFSIZ (4)
+static const size_t WERLD_RESPONSE_TYPE_BUFSIZ = 4;
 
-#define WERLD_RESPONSE_ERROR        -1
-#define WERLD_RESPONSE_TYPE_ERROR   -1
-#define WERLD_RESPONSE_TYPE_MESSAGE 0
-#define WERLD_RESPONSE_TYPE_PLAYERS 1
+enum { WERLD_RESPONSE_TYPE_ERROR = -1,
+       WERLD_RESPONSE_TYPE_MESSAGE = 0,
+       WERLD_RESPONSE_TYPE_PLAYERS = 1 };
 
 #define WERLD_REQUEST_PLAYER_BUFSIZ (strlen(WERLD_REQUEST_PLAYER) + \
                                      sizeof(struct player))
@@ -182,7 +179,7 @@ int client_handle_response(void) {
 
   if ((bytes_read = read(werld_client.fd,
                          &response_type,
-                         sizeof(WERLD_RESPONSE_TYPE_BUFSIZ))) < 0) {
+                         WERLD_RESPONSE_TYPE_BUFSIZ)) < 0) {
     perror("read");
     exit(errno);
   }

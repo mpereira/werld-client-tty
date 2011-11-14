@@ -1,11 +1,11 @@
 #ifndef WERLD_PLAYER_H
 #define WERLD_PLAYER_H
 
-#define WERLD_PLAYER_NAME_BUFSIZ (20)
-
 #include <stdint.h>
 
 #include "movement.h"
+
+enum { WERLD_PLAYER_NAME_BUFSIZ = 20 };
 
 struct player {
   uint32_t id;
