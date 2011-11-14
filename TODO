@@ -6,8 +6,6 @@ TODO
 
 * create status bar.
 
-* create message bar.
-
 * iterate on read()s and write()s and make sure all data is transmitted.
 
 * investigate whether or not it's possible to refactor player_message_list and
@@ -23,9 +21,9 @@ TODO
 
   This would decrease a lot of complexity.
 
-* investigate the possibility of merging player_message_list and player_list.
-
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.
 * make werld_client_handle_response() delegate responses.
+* create message bar.
+* merge player_message_list and player_list.
