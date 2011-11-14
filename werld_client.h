@@ -21,7 +21,7 @@ struct werld_client {
   double player_messages_lifetime;
   int fd;
   int log_level;
-  struct player player;
+  struct player *player;
   struct player_list *player_list;
 };
 

@@ -52,9 +52,10 @@ int main(int argc, const char *argv[]) {
   }
   wrefresh(werld_client.message_bar);
 
-  player_initialize(&(werld_client.player), 0, name, 0, 0);
+  player_malloc(&(werld_client.player));
+  player_set(werld_client.player, 0, name, 0, 0);
 
-  if (client_connect(werld_client.player) == -1) {
+  if (client_connect(*(werld_client.player)) == -1) {
     endwin();
     werld_client_log(WERLD_CLIENT_INFO,
                      "%s: failed to connect to the server\n",
@@ -63,7 +64,7 @@ int main(int argc, const char *argv[]) {
   }
 
   if (client_handle_response() == -1) {
-    client_disconnect(werld_client.player);
+    client_disconnect(*(werld_client.player));
     endwin();
     werld_client_log(WERLD_CLIENT_INFO,
                      "%s: connection to the server has been lost\n",
@@ -71,8 +72,10 @@ int main(int argc, const char *argv[]) {
     return(-1);
   }
 
-  player_list_init(&(werld_client.player_list));
-  player_list_add_player(&(werld_client.player_list), werld_client.player);
+  player_list_malloc(&(werld_client.player_list));
+  werld_client.player_list->player = werld_client.player;
+  werld_client.player_list->message_list = NULL;
+  werld_client.player_list->next = NULL;
 
   fd_set master_fds, read_fds;
 
@@ -90,7 +93,7 @@ int main(int argc, const char *argv[]) {
       keyboard_event(wgetch(stdscr));
     } else if (FD_ISSET(werld_client.fd, &read_fds)) {
       if (client_handle_response() == -1) {
-        client_disconnect(werld_client.player);
+        client_disconnect(*(werld_client.player));
         player_list_free(werld_client.player_list);
         endwin();
         werld_client_log(WERLD_CLIENT_INFO,
