@@ -23,13 +23,23 @@ endif
 
 all: werld_client
 
-client.o: client.c client.h player.h movement.h player_list.h ui.h
-keyboard.o: keyboard.c client.h player.h movement.h player_list.h
-main.o: main.c client.h player.h movement.h keyboard.h ui.h player_list.h
+client.o: client.c client.h player.h movement.h ui.h player_list.h \
+ werld_client.h
+keyboard.o: keyboard.c client.h player.h movement.h message_bar.h tty.h \
+ werld_client.h player_list.h
+main.o: main.c client.h player.h movement.h keyboard.h message_bar.h \
+ tty.h werld_client.h player_list.h
+message_bar.o: message_bar.c client.h player.h movement.h message_bar.h
+message_list.o: message_list.c client.h player.h movement.h \
+ message_list.h
 movement.o: movement.c movement.h
 player.o: player.c client.h player.h movement.h ui.h player_list.h
-player_list.o: player_list.c player_list.h player.h movement.h
+player_list.o: player_list.c player_list.h player.h movement.h \
+ message_list.h
+tty.o: tty.c tty.h ui.h player.h movement.h player_list.h werld_client.h
 ui.o: ui.c player.h movement.h player_list.h
+werld_client.o: werld_client.c werld_client.h player.h movement.h \
+ player_list.h
 
 werld_client: $(SRC_OBJECTS)
 	$(CC) $(CFLAGS) $(SRC) -o $(EXECUTABLE) $(SRC_OBJECTS) $(LDFLAGS)
