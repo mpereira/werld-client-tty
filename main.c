@@ -1,5 +1,6 @@
 #include <curses.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <sys/types.h>
 
 #include "client.h"
