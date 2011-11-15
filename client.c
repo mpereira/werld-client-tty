@@ -48,6 +48,8 @@ enum { WERLD_RESPONSE_TYPE_ERROR = -1,
                                              sizeof(struct player) + \
                                              strlen(message))
 
+#define WERLD_RESPONSE_MESSAGE_BUFSIZ(message_length) (sizeof(struct player) + \
+                                                       message_length)
 #define WERLD_RESPONSE_REGISTER_BUFSIZ sizeof(struct player)
 
 static void client_register(struct player player) {
@@ -213,6 +215,9 @@ int client_handle_response(void) {
     ui_draw_player(*(werld_client.player));
     refresh();
   } else if (response_type == WERLD_RESPONSE_TYPE_MESSAGE) {
+    char *message;
+    char *payload;
+    struct player player;
     uint32_t message_length;
 
     if ((bytes_read = read(werld_client.fd, &message_length, sizeof(uint32_t))) < 0) {
@@ -227,28 +232,21 @@ int client_handle_response(void) {
                             "+handle_response+message bytes read: %zd ",
                             bytes_read);
 
-    char *message;
-    if (!(message = malloc(message_length + 1))) {
-      perror("malloc");
-      exit(1);
-    }
-    char payload[sizeof(message) + sizeof(struct player)];
+    if (!(message = malloc(message_length + 1))) perror("malloc"), exit(errno);
+    if (!(payload = malloc(WERLD_RESPONSE_MESSAGE_BUFSIZ(message_length))))
+      perror("malloc"), exit(errno);
 
-    if ((bytes_read = read(werld_client.fd, payload, sizeof(payload))) < 0) {
-      perror("read");
-      exit(errno);
-    }
+    if ((bytes_read = read(werld_client.fd,
+                           payload,
+                           WERLD_RESPONSE_MESSAGE_BUFSIZ(message_length))) < 0)
+      perror("read"), exit(errno);
 
-    if (bytes_read == 0) {
-      return(-1);
-    }
+    if (bytes_read == 0) return(-1);
 
     werld_client_log_binary(WERLD_CLIENT_DEBUG,
                             payload,
                             "+handle_response+message bytes read: %zd ",
                             bytes_read);
-
-    struct player player;
 
     memcpy(&player, payload, sizeof(struct player));
     strncpy(message, payload + sizeof(struct player), message_length);
