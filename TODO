@@ -8,18 +8,7 @@ TODO
 
 * iterate on read()s and write()s and make sure all data is transmitted.
 
-* investigate whether or not it's possible to refactor player_message_list and
-  message_list into one module, where the list would actually be a queue and
-  each node would have the player's id.
-
-  struct message_queue {
-    char *message;
-    int player_id;
-    time_t created_at;
-    struct message_queue *next;
-  }
-
-  This would decrease a lot of complexity.
+* send player name size in the header.
 
 DONE
 * handle disconnect responses (0 bytes) gracefully.
