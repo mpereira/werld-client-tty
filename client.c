@@ -27,8 +27,9 @@ static const char *WERLD_REQUEST_MESSAGE    = "message";
 static const size_t WERLD_RESPONSE_TYPE_BUFSIZ = 4;
 
 enum { WERLD_RESPONSE_TYPE_ERROR = -1,
-       WERLD_RESPONSE_TYPE_MESSAGE = 0,
-       WERLD_RESPONSE_TYPE_PLAYERS = 1 };
+       WERLD_RESPONSE_TYPE_REGISTER,
+       WERLD_RESPONSE_TYPE_PLAYERS,
+       WERLD_RESPONSE_TYPE_MESSAGE };
 
 #define WERLD_REQUEST_PLAYER_BUFSIZ (strlen(WERLD_REQUEST_PLAYER) + \
                                      sizeof(struct player))
@@ -46,6 +47,8 @@ enum { WERLD_RESPONSE_TYPE_ERROR = -1,
 #define WERLD_REQUEST_MESSAGE_SIZE(message) (strlen(WERLD_REQUEST_MESSAGE) + \
                                              sizeof(struct player) + \
                                              strlen(message))
+
+#define WERLD_RESPONSE_REGISTER_BUFSIZ sizeof(struct player)
 
 static void client_register(struct player player) {
   ssize_t bytes_written;
@@ -188,7 +191,28 @@ int client_handle_response(void) {
     return(-1);
   }
 
-  if (response_type == WERLD_RESPONSE_TYPE_MESSAGE) {
+  if (response_type == WERLD_RESPONSE_TYPE_REGISTER) {
+    char data[WERLD_RESPONSE_REGISTER_BUFSIZ];
+    struct player player;
+
+    if ((bytes_read = read(werld_client.fd,
+                           &player,
+                           WERLD_RESPONSE_REGISTER_BUFSIZ)) < 0) {
+      perror("read");
+      exit(errno);
+    }
+
+    if (bytes_read == 0) return(-1);
+
+    werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                            data,
+                            "+handle_response+register bytes read: %zd ",
+                            bytes_read);
+
+    memcpy(werld_client.player, &player, sizeof(struct player));
+    ui_draw_player(*(werld_client.player));
+    refresh();
+  } else if (response_type == WERLD_RESPONSE_TYPE_MESSAGE) {
     uint32_t message_length;
 
     if ((bytes_read = read(werld_client.fd, &message_length, sizeof(uint32_t))) < 0) {
