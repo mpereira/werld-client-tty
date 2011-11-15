@@ -20,7 +20,7 @@ int main(int argc, const char *argv[]) {
   werld_client.player_messages_lifetime = 3;
 
   initscr();
-  raw();
+  cbreak();
   keypad(stdscr, true);
   curs_set(false);
 
