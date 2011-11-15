@@ -15,7 +15,7 @@ void player_list_malloc(struct player_list **player_list) {
   }
 }
 
-void player_list_init(struct player_list **player_list) {
+static void player_list_init(struct player_list **player_list) {
   *player_list = NULL;
 }
 
@@ -31,8 +31,8 @@ void player_list_free(struct player_list *player_list) {
   }
 }
 
-bool player_list_player_member(const struct player_list *player_list,
-                               const struct player *player) {
+static bool player_list_player_member(const struct player_list *player_list,
+                                      const struct player *player) {
   for (; player_list; player_list = player_list->next) {
     if (player_list->player && player_list->player->id == player->id) {
       return(true);
@@ -42,8 +42,8 @@ bool player_list_player_member(const struct player_list *player_list,
   return(false);
 }
 
-void player_list_add_player(struct player_list **player_list,
-                            const struct player *player) {
+static void player_list_add_player(struct player_list **player_list,
+                                   const struct player *player) {
   struct player_list **new;
   struct player_list *iterator = *player_list;
   struct player_list *tmp;
@@ -61,7 +61,8 @@ void player_list_add_player(struct player_list **player_list,
   (*new)->next = NULL;
 }
 
-void player_list_update_player(struct player_list **player_list, struct player *player) {
+static void player_list_update_player(struct player_list **player_list,
+                                      const struct player *player) {
   struct player_list *iterator = *player_list;
 
   for (; iterator; iterator = iterator->next) {
@@ -72,7 +73,8 @@ void player_list_update_player(struct player_list **player_list, struct player *
   }
 }
 
-int player_list_remove_player(struct player_list **player_list, struct player *player) {
+static int player_list_remove_player(struct player_list **player_list,
+                                     const struct player *player) {
   struct player_list *iterator = *player_list;
   struct player_list *previous = NULL;
 
@@ -93,8 +95,8 @@ int player_list_remove_player(struct player_list **player_list, struct player *p
 }
 
 int player_list_add_message(struct player_list **player_list,
-                            const char *message,
-                            uint32_t player_id) {
+                                   const char *message,
+                                   uint32_t player_id) {
   struct player_list *iterator = *player_list;
   time_t now;
 
@@ -111,8 +113,8 @@ int player_list_add_message(struct player_list **player_list,
 }
 
 int player_list_remove_message(struct player_list **player_list,
-                               const char *message,
-                               uint32_t player_id) {
+                                      const char *message,
+                                      uint32_t player_id) {
   struct player_list *iterator = *player_list;
 
   for (; iterator; iterator = iterator->next) {
