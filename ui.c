@@ -14,7 +14,7 @@ void ui_draw_player(struct player player) {
 
 void ui_draw_player_with_message(struct player player, const char *message) {
   move(player.y - 3, (player.x - strlen(message) / 2));
-  addstr(message);
+  addnstr(message, strlen(message));
   ui_draw_player(player);
 }
 

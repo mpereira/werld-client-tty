@@ -220,16 +220,18 @@ int client_handle_response(void) {
       exit(errno);
     }
 
-    if (bytes_read == 0) {
-      return(-1);
-    }
+    if (bytes_read == 0) return(-1);
 
     werld_client_log_binary(WERLD_CLIENT_DEBUG,
                             (char *) &message_length,
                             "+handle_response+message bytes read: %zd ",
                             bytes_read);
 
-    char message[message_length + 1];
+    char *message;
+    if (!(message = malloc(message_length + 1))) {
+      perror("malloc");
+      exit(1);
+    }
     char payload[sizeof(message) + sizeof(struct player)];
 
     if ((bytes_read = read(werld_client.fd, payload, sizeof(payload))) < 0) {
@@ -249,9 +251,11 @@ int client_handle_response(void) {
     struct player player;
 
     memcpy(&player, payload, sizeof(struct player));
-    strncpy(message, payload + sizeof(struct player), sizeof(message));
+    strncpy(message, payload + sizeof(struct player), message_length);
+    message[message_length] = '\0';
 
     ui_draw_player_with_message(player, message);
+    free(message);
     refresh();
   } else if (response_type == WERLD_RESPONSE_TYPE_PLAYERS) {
     uint32_t number_of_players;
