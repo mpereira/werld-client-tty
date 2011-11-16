@@ -93,12 +93,17 @@ int main(int argc, const char *argv[]) {
   FD_SET(fileno(stdin), &master_fds);
   FD_SET(werld_client.fd, &master_fds);
   FD_SET(werld_client.message_handler_fds[0], &master_fds);
+
   do {
     read_fds = master_fds;
     timeout.tv_sec = werld_client.player_messages_lifetime;
     timeout.tv_usec = 0;
 
-    if (select(werld_client.message_handler_fds[0] + 1, &read_fds, NULL, NULL, &timeout) == -1) {
+    if (select(werld_client.message_handler_fds[0] + 1,
+               &read_fds,
+               NULL,
+               NULL,
+               &timeout) == -1) {
       perror("select");
       continue;
     }
@@ -109,7 +114,8 @@ int main(int argc, const char *argv[]) {
       if (message_handler_handle_player_message() == -1) {
         /* code */
       }
-    } else if (FD_ISSET(werld_client.fd, &read_fds)) {
+    }
+    if (FD_ISSET(werld_client.fd, &read_fds)) {
       if (client_handle_response() == -1) {
         client_disconnect(*(werld_client.player));
         player_list_free(werld_client.player_list);
