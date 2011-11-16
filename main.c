@@ -26,7 +26,6 @@ int main(int argc, const char *argv[]) {
   initscr();
   cbreak();
   keypad(stdscr, true);
-  curs_set(false);
 
   while (!tty_term_size_ok()) {
     clear();
@@ -39,11 +38,12 @@ int main(int argc, const char *argv[]) {
   }
 
   /* FIXME: make this resistant to terminal resizing. */
+  curs_set(true);
   clear();
   mvaddstr(0, 0, "What's your name? ");
   refresh();
   wgetnstr(stdscr, name, sizeof(name));
-
+  curs_set(false);
   noecho();
   clear();
   refresh();
