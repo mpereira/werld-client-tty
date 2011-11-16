@@ -29,6 +29,10 @@ void message_list_malloc(struct message_list **message_list) {
   }
 }
 
+void message_list_init(struct message_list **message_list) {
+  *message_list = NULL;
+}
+
 int message_list_add(struct message_list **message_list,
                      const char *message,
                      time_t created_at) {

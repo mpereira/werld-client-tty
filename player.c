@@ -1,6 +1,5 @@
 #include <errno.h>
 #include <malloc.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -9,19 +8,6 @@
 #include "player.h"
 #include "ui.h"
 
-struct player player;
-
-void player_initialize(struct player *player,
-                       int id,
-                       const char *name,
-                       int y,
-                       int x) {
-  player->id = id;
-  strncpy(player->name, name, strlen(name));
-  player->y = y;
-  player->x = x;
-}
-
 void player_malloc(struct player **player) {
   if (!(*player = malloc(sizeof(struct player)))) {
     perror("malloc");
@@ -29,14 +15,19 @@ void player_malloc(struct player **player) {
   }
 }
 
-void player_cpy(struct player **destination, struct player *source) {
-  memcpy(*destination, source, sizeof(struct player));
+void player_free(struct player *player) {
+  free(player);
 }
 
-void player_free(struct player *player) {
-  if (player) {
-    free(player);
-  }
+void player_set(struct player *player,
+                int id,
+                const char *name,
+                uint32_t y,
+                uint32_t x) {
+  player->id = id;
+  strncpy(player->name, name, strlen(name));
+  player->y = y;
+  player->x = x;
 }
 
 void player_move(struct player *player, enum movement movement) {

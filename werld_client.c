@@ -5,7 +5,7 @@
 
 #include "werld_client.h"
 
-static char *werld_client_log_level[] = { "debug", "error", "info" };
+static const char *WERLD_CLIENT_LOG_LEVEL[] = { "debug", "error", "info" };
 
 struct werld_client werld_client;
 
@@ -28,7 +28,7 @@ void werld_client_log(int level, const char *fmt, ...) {
   if (!log_file) return;
 
   strftime(time_str, sizeof(time_str), "%d %b %X", localtime(&now));
-  fprintf(log_file, "%s [%s] %s", time_str, werld_client_log_level[level], message);
+  fprintf(log_file, "%s [%s] %s", time_str, WERLD_CLIENT_LOG_LEVEL[level], message);
   fflush(log_file);
 }
 

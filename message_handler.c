@@ -1,3 +1,4 @@
+#include <curses.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -8,7 +9,6 @@
 
 #include "message_handler.h"
 #include "message_list.h"
-#include "player_message_list.h"
 #include "werld_client.h"
 #include "ui.h"
 
@@ -43,7 +43,10 @@ int message_handler_handle_player_message(void) {
   memcpy(&player, data + sizeof(size_t), sizeof(struct player));
   strncpy(message, data + sizeof(size_t) + sizeof(struct player), message_size);
 
-  player_message_list_add(&(werld_client.player_message_list), message, player.id);
+  ui_erase_player_message_list(&player);
+  player_list_add_message(&(werld_client.player_list), message, player.id);
+  ui_draw_player_message_list(&player);
+  refresh();
   free(message);
 
   return(0);
@@ -66,7 +69,7 @@ void message_handler_handle_incoming_message(const struct player *player,
 }
 
 void message_handler_sweep_messages(void) {
-  struct player_message_list *i = werld_client.player_message_list;
+  struct player_list *i = werld_client.player_list;
   struct message_list *j;
   time_t now;
   time(&now);
@@ -78,10 +81,10 @@ void message_handler_sweep_messages(void) {
         werld_client_log(WERLD_CLIENT_DEBUG,
                          "+message_handler_sweep_messages sweeping %s\n",
                          j->message);
-        ui_erase_player_message_list(i);
+        ui_erase_player_message_list(i->player);
         message_list_remove(&(i->message_list), j->message);
         ui_draw_player_list(werld_client.player_list);
-        ui_draw_player_message_list(i);
+        ui_draw_player_message_list(i->player);
         refresh();
       }
     }

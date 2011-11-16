@@ -4,12 +4,13 @@
 #include <curses.h>
 #include <stdarg.h>
 
-#define WERLD_LOG_MESSAGE_BUFSIZ 1024
-#define WERLD_BINARY_STRING_BUFSIZ 896
+#include "player.h"
+#include "player_list.h"
 
-#define WERLD_CLIENT_DEBUG  0
-#define WERLD_CLIENT_ERROR  1
-#define WERLD_CLIENT_INFO   2
+static const size_t WERLD_LOG_MESSAGE_BUFSIZ = 1024;
+static const size_t WERLD_BINARY_STRING_BUFSIZ = 896;
+
+enum { WERLD_CLIENT_DEBUG, WERLD_CLIENT_ERROR, WERLD_CLIENT_INFO };
 
 #define werld_client_log_binary(level, binary, fmt, ...) \
   _werld_client_log_binary(level, binary, sizeof(binary), fmt, ## __VA_ARGS__)
@@ -18,10 +19,11 @@ struct werld_client {
   WINDOW *message_bar;
   char *log_file;
   double player_messages_lifetime;
+  int fd;
   int log_level;
   int message_handler_fds[2];
+  struct player *player;
   struct player_list *player_list;
-  struct player_message_list *player_message_list;
 };
 
 extern struct werld_client werld_client;

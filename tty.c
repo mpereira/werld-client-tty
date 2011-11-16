@@ -1,7 +1,8 @@
 #include <curses.h>
 
-#include "ui.h"
 #include "tty.h"
+#include "ui.h"
+#include "werld_client.h"
 
 bool tty_term_size_ok() {
   int lines, columns;
@@ -12,7 +13,7 @@ bool tty_term_size_ok() {
 void tty_handle_resize(void) {
   clear();
   if (tty_term_size_ok()) {
-    ui_draw_player_list(player_list);
+    ui_draw_player_list(werld_client.player_list);
   } else {
     mvaddstr(1, 1, WERLD_SMALL_TERM_MSG);
   }

@@ -1,23 +1,22 @@
 #ifndef WERLD_PLAYER_H
 #define WERLD_PLAYER_H
 
-#define WERLD_PLAYER_NAME_BUFSIZ (20)
+#include <stdint.h>
 
 #include "movement.h"
 
+enum { WERLD_PLAYER_NAME_BUFSIZ = 20 };
+
 struct player {
-  int id;
+  uint32_t id;
   char name[WERLD_PLAYER_NAME_BUFSIZ];
-  int y;
-  int x;
+  uint32_t y;
+  uint32_t x;
 };
 
-extern struct player player;
-
 void player_malloc(struct player **);
-void player_initialize(struct player *, int, const char *, int, int);
-void player_cpy(struct player **, struct player *);
 void player_free(struct player *);
+void player_set(struct player *, int, const char *, uint32_t, uint32_t);
 void player_move(struct player *, enum movement);
 
 #endif

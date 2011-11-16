@@ -1,11 +1,9 @@
 #include <curses.h>
-#include <stdio.h>
 #include <string.h>
 
 #include "message_list.h"
 #include "player.h"
 #include "player_list.h"
-#include "player_message_list.h"
 #include "werld_client.h"
 
 void ui_draw_player(struct player player) {
@@ -25,11 +23,6 @@ void ui_erase_player(struct player player) {
   addch(' ');
 }
 
-void ui_redraw_player(struct player player) {
-  ui_erase_player(player);
-  ui_draw_player(player);
-}
-
 void ui_draw_player_list(const struct player_list *player_list) {
   for (; player_list; player_list = player_list->next) {
     ui_draw_player(*(player_list->player));
@@ -42,72 +35,59 @@ void ui_erase_player_list(const struct player_list *player_list) {
   }
 }
 
-void ui_redraw_player_list(const struct player_list *player_list) {
+/* FIXME: refactor and don't depend on werld_client.player_list. */
+void ui_draw_player_message_list(const struct player *player) {
+  struct message_list *message_list;
+  struct player_list *player_list = werld_client.player_list;
+
+  message_list = NULL;
   for (; player_list; player_list = player_list->next) {
-    ui_redraw_player(*(player_list->player));
+    if (player_list->player && player_list->player->id == player->id) {
+      message_list = player_list->message_list;
+    }
   }
-}
 
-void ui_draw_player_with_message(struct player player, const char *message) {
-  move(player.y - 3, (player.x - strlen(message) / 2));
-  addstr(message);
-  ui_draw_player(player);
-}
-
-void ui_draw_player_message_list(const struct player_message_list *player_message_list) {
-  int player_id;
   int y, x;
-  struct message_list *iterator;
-  struct player *player;
-  struct player_list *player_list;
-
-  iterator = player_message_list ? player_message_list->message_list : NULL;
-
-  if (player_message_list) {
-    player_list = player_list_find_by_player_id(werld_client.player_list, player_message_list->player_id);
-    player = player_list ? player_list->player : NULL;
+  if (player) {
     y = player->y;
-    x = player->y;
+    x = player->x;
   }
 
-  for (; iterator; iterator = iterator->next) {
+  for (; message_list; message_list = message_list->next) {
     if (player) {
-      mvaddstr(y - 3, (x - strlen(iterator->message)) / 2, iterator->message);
+      mvaddstr(y - 3,
+               x - strlen(message_list->message) / 2,
+               message_list->message);
       y--;
     }
   }
 }
 
-void ui_erase_player_message_list(const struct player_message_list *player_message_list) {
-  int player_id;
-  int y, x;
-  struct message_list *iterator;
-  struct player *player;
-  struct player_list *player_list;
+/* FIXME: refactor and don't depend on werld_client.player_list. */
+void ui_erase_player_message_list(const struct player *player) {
+  struct message_list *message_list;
+  struct player_list *player_list = werld_client.player_list;
 
-  iterator = player_message_list ? player_message_list->message_list : NULL;
-
-  if (player_message_list) {
-    player_list = player_list_find_by_player_id(werld_client.player_list, player_message_list->player_id);
-    player = player_list ? player_list->player : NULL;
-    y = player->y;
-    x = player->y;
+  message_list = NULL;
+  for (; player_list; player_list = player_list->next) {
+    if (player_list->player && player_list->player->id == player->id) {
+      message_list = player_list->message_list;
+    }
   }
 
-  for (; iterator; iterator = iterator->next) {
+  int y, x;
+  if (player) {
+    y = player->y;
+    x = player->x;
+  }
+
+  for (; message_list; message_list = message_list->next) {
     if (player) {
-      move(y - 3, (x - strlen(iterator->message)) / 2);
-      for (unsigned int i = 0; i < strlen(iterator->message); i++) {
+      move(y - 3, x - strlen(message_list->message) / 2);
+      for (size_t i = 0; i < strlen(message_list->message); i++) {
         addch(' ');
       }
       y--;
     }
   }
-}
-
-void ui_draw_player_message(struct player player, const char *message) {
-  mvprintw(player.y - 3,
-           (player.x - strlen(message) / 2),
-           "%s",
-           message);
 }
