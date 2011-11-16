@@ -83,7 +83,9 @@ int client_connect(struct player player) {
                             WERLD_SERVER_PORT,
                             &hints,
                             &results))) {
-    werld_client_log(WERLD_CLIENT_ERROR, "getaddrinfo: %s\n", gai_strerror(status));
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "getaddrinfo: %s\n",
+                     gai_strerror(status));
     exit(errno);
   }
 
@@ -96,7 +98,9 @@ int client_connect(struct player player) {
       continue;
     }
 
-    if (connect(werld_client.fd, iterator->ai_addr, iterator->ai_addrlen) == -1) {
+    if (connect(werld_client.fd,
+        iterator->ai_addr,
+        iterator->ai_addrlen) == -1) {
       close(werld_client.fd);
       continue;
     }
@@ -220,7 +224,9 @@ int client_handle_response(void) {
     struct player player;
     uint32_t message_length;
 
-    if ((bytes_read = read(werld_client.fd, &message_length, sizeof(uint32_t))) < 0) {
+    if ((bytes_read = read(werld_client.fd,
+                           &message_length,
+                           sizeof(uint32_t))) < 0) {
       perror("read");
       exit(errno);
     }
@@ -258,7 +264,9 @@ int client_handle_response(void) {
   } else if (response_type == WERLD_RESPONSE_TYPE_PLAYERS) {
     uint32_t number_of_players;
 
-    if ((bytes_read = read(werld_client.fd, &number_of_players, sizeof(uint32_t))) < 0) {
+    if ((bytes_read = read(werld_client.fd,
+                           &number_of_players,
+                           sizeof(uint32_t))) < 0) {
       perror("read");
       exit(errno);
     }
@@ -289,7 +297,9 @@ int client_handle_response(void) {
                             bytes_read);
 
     ui_erase_player_list(werld_client.player_list);
-    player_list_update(&(werld_client.player_list), (void *) payload, number_of_players);
+    player_list_update(&(werld_client.player_list),
+                       (void *) payload,
+                       number_of_players);
     ui_draw_player_list(werld_client.player_list);
     refresh();
   }
