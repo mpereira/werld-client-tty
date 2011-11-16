@@ -10,6 +10,8 @@ TODO
 
 * send player name size in the header.
 
+* merge tty and ui?
+
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.
