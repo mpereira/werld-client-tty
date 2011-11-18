@@ -12,6 +12,8 @@ TODO
 
 * merge tty and ui?
 
+* make walking and chatting work.
+
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.
