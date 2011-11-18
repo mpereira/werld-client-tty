@@ -50,9 +50,11 @@ enum { WERLD_RESPONSE_TYPE_ERROR = -1,
                                              sizeof(struct player) + \
                                              strlen(message))
 
+#define WERLD_RESPONSE_REGISTER_BUFSIZ sizeof(struct player)
 #define WERLD_RESPONSE_MESSAGE_BUFSIZ(message_length) (sizeof(struct player) + \
                                                        message_length)
-#define WERLD_RESPONSE_REGISTER_BUFSIZ sizeof(struct player)
+#define WERLD_RESPONSE_PLAYERS_BUFSIZ(number_of_players) (number_of_players * \
+                                                          sizeof(struct player))
 
 static void client_register(struct player player) {
   ssize_t bytes_written;
@@ -85,7 +87,9 @@ int client_connect(struct player player) {
                             WERLD_SERVER_PORT,
                             &hints,
                             &results))) {
-    werld_client_log(WERLD_CLIENT_ERROR, "getaddrinfo: %s\n", gai_strerror(status));
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "getaddrinfo: %s\n",
+                     gai_strerror(status));
     exit(errno);
   }
 
@@ -98,7 +102,9 @@ int client_connect(struct player player) {
       continue;
     }
 
-    if (connect(werld_client.fd, iterator->ai_addr, iterator->ai_addrlen) == -1) {
+    if (connect(werld_client.fd,
+        iterator->ai_addr,
+        iterator->ai_addrlen) == -1) {
       close(werld_client.fd);
       continue;
     }
@@ -222,7 +228,9 @@ int client_handle_response(void) {
     struct player player;
     uint32_t message_length;
 
-    if ((bytes_read = read(werld_client.fd, &message_length, sizeof(uint32_t))) < 0) {
+    if ((bytes_read = read(werld_client.fd,
+                           &message_length,
+                           sizeof(uint32_t))) < 0) {
       perror("read");
       exit(errno);
     }
@@ -257,32 +265,30 @@ int client_handle_response(void) {
     message_handler_handle_incoming_message(&player, message);
     free(message);
   } else if (response_type == WERLD_RESPONSE_TYPE_PLAYERS) {
+    char *payload;
     uint32_t number_of_players;
 
-    if ((bytes_read = read(werld_client.fd, &number_of_players, sizeof(uint32_t))) < 0) {
-      perror("read");
-      exit(errno);
-    }
+    if ((bytes_read = read(werld_client.fd,
+                           &number_of_players,
+                           sizeof(uint32_t))) < 0)
+      perror("read"), exit(errno);
 
-    if (bytes_read == 0) {
-      return(-1);
-    }
+    if (bytes_read == 0) return(-1);
 
     werld_client_log_binary(WERLD_CLIENT_DEBUG,
                             (char *) &number_of_players,
                             "+handle_response+players bytes read: %zd ",
                             bytes_read);
 
-    char payload[number_of_players * sizeof(struct player)];
+    if (!(payload = malloc(WERLD_RESPONSE_PLAYERS_BUFSIZ(number_of_players))))
+      perror("malloc"), exit(errno);
 
-    if ((bytes_read = read(werld_client.fd, payload, sizeof(payload))) < 0) {
-      perror("read");
-      exit(errno);
-    }
+    if ((bytes_read = read(werld_client.fd,
+                           payload,
+                           WERLD_RESPONSE_PLAYERS_BUFSIZ(number_of_players))) < 0)
+      perror("read"), exit(errno);
 
-    if (bytes_read == 0) {
-      return(-1);
-    }
+    if (bytes_read == 0) return(-1);
 
     werld_client_log_binary(WERLD_CLIENT_DEBUG,
                             payload,
@@ -290,7 +296,9 @@ int client_handle_response(void) {
                             bytes_read);
 
     ui_erase_player_list(werld_client.player_list);
-    player_list_update(&(werld_client.player_list), (void *) payload, number_of_players);
+    player_list_update(&(werld_client.player_list),
+                       (void *) payload,
+                       number_of_players);
     ui_draw_player_list(werld_client.player_list);
     refresh();
   }
