@@ -149,17 +149,17 @@ void player_list_update(struct player_list **player_list,
    * I know there are better data structures for the local players state. This
    * will be taken care of in the future (or not).
    */
-  for (iterator = *player_list; iterator; iterator = iterator->next) {
-    if (player_list_player_member(new_player_list, iterator->player)) {
+  for (iterator = new_player_list; iterator; iterator = iterator->next) {
+    if (player_list_player_member(*player_list, iterator->player)) {
       player_list_update_player(player_list, iterator->player);
     } else {
-      player_list_remove_player(player_list, iterator->player);
+      player_list_add_player(player_list, iterator->player);
     }
   }
 
-  for (iterator = new_player_list; iterator; iterator = iterator->next) {
-    if (!player_list_player_member(*player_list, iterator->player)) {
-      player_list_add_player(player_list, iterator->player);
+  for (iterator = *player_list; iterator; iterator = iterator->next) {
+    if (!player_list_player_member(new_player_list, iterator->player)) {
+      player_list_remove_player(player_list, iterator->player);
     }
   }
 }
