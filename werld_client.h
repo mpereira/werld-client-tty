@@ -12,9 +12,6 @@ static const size_t WERLD_BINARY_STRING_BUFSIZ = 896;
 
 enum { WERLD_CLIENT_DEBUG, WERLD_CLIENT_ERROR, WERLD_CLIENT_INFO };
 
-#define werld_client_log_binary(level, binary, fmt, ...) \
-  _werld_client_log_binary(level, binary, sizeof(binary), fmt, ## __VA_ARGS__)
-
 struct werld_client {
   WINDOW *message_bar;
   char *log_file;
@@ -29,6 +26,6 @@ struct werld_client {
 extern struct werld_client werld_client;
 
 void werld_client_log(int, const char *, ...);
-void _werld_client_log_binary(int, const char[], size_t, char *, ...);
+void werld_client_log_binary(int, const uint8_t *, size_t, char *, ...);
 
 #endif

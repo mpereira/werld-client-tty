@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -32,7 +33,7 @@ void werld_client_log(int level, const char *fmt, ...) {
   fflush(log_file);
 }
 
-void _werld_client_log_binary(int level, const char binary[], size_t binary_size, char *fmt, ...) {
+void werld_client_log_binary(int level, const uint8_t *binary, size_t binary_size, char *fmt, ...) {
   FILE *log_file;
   char message[WERLD_LOG_MESSAGE_BUFSIZ];
   va_list ap;
@@ -50,8 +51,10 @@ void _werld_client_log_binary(int level, const char binary[], size_t binary_size
 
   werld_client_log(level, message);
 
-  for (unsigned int i = 0; i < binary_size; i++) {
-    fprintf(log_file, "%x", binary[i]);
+  fprintf(log_file, "<<");
+  for (unsigned int i = 0; i < binary_size - 1; i++) {
+    fprintf(log_file, "%hd,", binary[i]);
   }
-  fprintf(log_file, "\n");
+  fprintf(log_file, "%hd", binary[binary_size]);
+  fprintf(log_file, ">>\n");
 }
