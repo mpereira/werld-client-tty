@@ -13,59 +13,90 @@
 #include "ui.h"
 
 int message_handler_handle_player_message(void) {
+  char *data;
   char *message;
-  char data[WERLD_MESSAGE_HANDLER_READ_BUFSIZ];
   size_t message_size;
   ssize_t bytes_read;
   struct player player;
 
   if ((bytes_read = read(werld_client.message_handler_fds[0],
-                         data,
-                         sizeof(data))) < 0) {
+                         &message_size,
+                         sizeof(size_t))) < 0) {
     perror("read");
     return(-1);
   }
 
+  if (bytes_read == 0) return(-1);
+
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
-                          data,
-                          "+message_handler_init read %zd bytes ",
+                          (uint8_t *) &message_size,
+                          sizeof(size_t),
+                          "+message_handler+handle_player_message bytes read: %zd ",
                           bytes_read);
 
-  if (bytes_read == 0) {
+  if (!(data = malloc(WERLD_MESSAGE_HANDLER_READ_BUFSIZ(message_size)))) {
+    perror("malloc");
+    exit(errno);
+  }
+
+  if ((bytes_read = read(werld_client.message_handler_fds[0],
+                         data,
+                         WERLD_MESSAGE_HANDLER_READ_BUFSIZ(message_size))) < 0) {
+    perror("read");
     return(-1);
   }
 
-  memcpy(&message_size, data, sizeof(size_t));
+  if (bytes_read == 0) return(-1);
+
   if (!(message = malloc(message_size))) {
     perror("malloc");
-    return(-1);
+    exit(errno);
   }
-  memcpy(&player, data + sizeof(size_t), sizeof(struct player));
-  strncpy(message, data + sizeof(size_t) + sizeof(struct player), message_size);
+
+  memcpy(&player, data, sizeof(struct player));
+  memcpy(message, data + sizeof(struct player), message_size);
+  message[message_size] = '\0';
 
   ui_erase_player_message_list(&player);
   player_list_add_message(&(werld_client.player_list), message, player.id);
   ui_draw_player_message_list(&player);
   refresh();
   free(message);
+  free(data);
 
   return(0);
 }
 
 void message_handler_handle_incoming_message(const struct player *player,
                                              const char *message) {
-  char data[WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message)];
+  char *data;
   size_t message_size = strlen(message) + 1;
+  ssize_t bytes_written;
+
+
+  if (!(data = malloc(WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message)))) {
+    perror("malloc");
+    exit(errno);
+  }
 
   void *offset = mempcpy(data, &message_size, sizeof(size_t));
   offset = mempcpy(offset, player, sizeof(struct player));
   memcpy(offset, message, message_size);
 
+  if ((bytes_written = write(werld_client.message_handler_fds[1],
+                             data,
+                             WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message))) < 0) {
+    perror("write");
+    exit(errno);
+  }
+
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
-                          data,
-                          "+message_handler_handle_incoming_message writing %d bytes ",
-                          sizeof(data));
-  write(werld_client.message_handler_fds[1], data, sizeof(data));
+                          (uint8_t *) data,
+                          WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message),
+                          "+message_handler+handle_incoming_message bytes written: %d ",
+                          bytes_written);
+
+  free(data);
 }
 
 void message_handler_sweep_messages(void) {
