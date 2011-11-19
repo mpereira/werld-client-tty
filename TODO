@@ -16,6 +16,11 @@ TODO
 
 * don't depend on sizeof(struct) since GCC may pad struct alignment.
 
+* in the future, when a player moves the server will not respond with the
+  entire player list, so we'll be able to refresh the moving player's message
+  list more intelligently than erasing and drawing the list for every player
+  in the list.
+
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.
