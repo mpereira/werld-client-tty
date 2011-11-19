@@ -12,7 +12,9 @@ TODO
 
 * merge tty and ui?
 
-* make walking and chatting work.
+* make walking and chatting work flawlessly.
+
+* don't depend on sizeof(struct) since GCC may pad struct alignment.
 
 DONE
 * handle disconnect responses (0 bytes) gracefully.
