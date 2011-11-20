@@ -4,8 +4,6 @@ TODO
 
 * don't allow players to walk through each other.
 
-* iterate on read()s and write()s and make sure all data is transmitted.
-
 * send player name size in the header.
 
 * merge tty and ui?
@@ -23,6 +21,8 @@ TODO
 
 * work with wide characters.
 
+* using the new 'net' module breaks messages. discover why.
+
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.
@@ -31,3 +31,4 @@ DONE
 * merge player_message_list and player_list.
 * make walking and chatting work flawlessly.
 * create status bar.
+* iterate on read()s and write()s and make sure all data is transmitted.
