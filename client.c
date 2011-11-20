@@ -13,8 +13,6 @@
 #include "ui.h"
 #include "werld_client.h"
 
-const size_t WERLD_PLAYER_MESSAGE_BUFSIZ = 77;
-
 #ifdef WERLD_DEVELOPMENT
 static const char *WERLD_SERVER_ADDRESS = "0.0.0.0";
 #else
@@ -46,7 +44,7 @@ enum { WERLD_RESPONSE_TYPE_ERROR = -1,
 
 #define WERLD_REQUEST_MESSAGE_BUFSIZ (strlen(WERLD_REQUEST_MESSAGE) + \
                                       sizeof(struct player) + \
-                                      WERLD_PLAYER_MESSAGE_BUFSIZ)
+                                      WERLD_PLAYER_MESSAGE_MAX_LENGTH)
 
 #define WERLD_REQUEST_MESSAGE_SIZE(message) (strlen(WERLD_REQUEST_MESSAGE) + \
                                              sizeof(struct player) + \

@@ -1,6 +1,6 @@
 #include <curses.h>
 
-#include "client.h"
+#include "message.h"
 #include "message_bar.h"
 
 static const int MESSAGE_BAR_LINES = 1;
@@ -27,7 +27,7 @@ void message_bar_getstr(WINDOW *message_bar_window, char *message) {
   echo();
   curs_set(true);
   mvwaddch(message_bar_window, 0, 0, '>');
-  mvwgetnstr(message_bar_window, 0, 2, message, WERLD_PLAYER_MESSAGE_BUFSIZ);
+  mvwgetnstr(message_bar_window, 0, 2, message, WERLD_PLAYER_MESSAGE_MAX_LENGTH);
   werase(message_bar_window);
   wrefresh(message_bar_window);
   curs_set(false);

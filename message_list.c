@@ -4,15 +4,15 @@
 #include <string.h>
 #include <time.h>
 
-#include "client.h"
+#include "message.h"
 #include "message_list.h"
 
 static size_t message_list_malloc_message(char **storage, const char *message) {
-  size_t buffer_size = WERLD_PLAYER_MESSAGE_BUFSIZ;
+  size_t max_size = WERLD_PLAYER_MESSAGE_MAX_LENGTH + 1;
   size_t message_size = strlen(message) + 1;
   size_t size;
 
-  size = (message_size > buffer_size) ? buffer_size : message_size;
+  size = (message_size > max_size) ? max_size : message_size;
 
   if (!(*storage = malloc(size))) {
     perror("malloc");

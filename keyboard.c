@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "client.h"
-#include "message_bar.h"
+#include "message.h"
 #include "message_bar.h"
 #include "movement.h"
 #include "player.h"
@@ -29,7 +29,7 @@ void keyboard_event(int key) {
   if (tty_term_size_ok()) {
     switch (key) {
     case '\n':
-      if (!(message = malloc(WERLD_PLAYER_MESSAGE_BUFSIZ))) {
+      if (!(message = malloc(WERLD_PLAYER_MESSAGE_MAX_LENGTH + 1))) {
         perror("malloc");
         exit(errno);
       }
