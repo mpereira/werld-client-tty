@@ -13,6 +13,7 @@ SRC_OBJECTS = \
               $(SRC_DIR)/message_handler.o \
               $(SRC_DIR)/message_list.o    \
               $(SRC_DIR)/movement.o        \
+              $(SRC_DIR)/net.o             \
               $(SRC_DIR)/player.o          \
               $(SRC_DIR)/player_list.o     \
               $(SRC_DIR)/status_bar.o      \
