@@ -1,4 +1,6 @@
 #include <curses.h>
+#include <errno.h>
+#include <malloc.h>
 #include <stdlib.h>
 
 #include "client.h"
@@ -13,7 +15,7 @@
 #include "window.h"
 
 void keyboard_event(int key) {
-  char message[WERLD_PLAYER_MESSAGE_BUFSIZ];
+  char *message;
 
   if (key == 'q' || key == 'Q') {
     client_disconnect(*(werld_client.player));
@@ -27,9 +29,14 @@ void keyboard_event(int key) {
   if (tty_term_size_ok()) {
     switch (key) {
     case '\n':
+      if (!(message = malloc(WERLD_PLAYER_MESSAGE_BUFSIZ))) {
+        perror("malloc");
+        exit(errno);
+      }
       /* FIXME: make this asynchronous. */
       message_bar_getstr(werld_client.message_bar, message);
       client_send_message(*(werld_client.player), message);
+      free(message);
       break;
     case 'h':
     case 'j':
