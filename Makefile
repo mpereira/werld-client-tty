@@ -39,7 +39,7 @@ movement.o: movement.c movement.h
 player.o: player.c client.h player.h movement.h ui.h message_list.h \
  player_list.h
 player_list.o: player_list.c player_list.h player.h movement.h \
- message_list.h
+ message_list.h ui.h
 tty.o: tty.c tty.h ui.h message_list.h player.h movement.h player_list.h \
  werld_client.h
 ui.o: ui.c message_list.h player.h movement.h player_list.h \

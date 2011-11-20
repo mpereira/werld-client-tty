@@ -5,8 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "player_list.h"
 #include "message_list.h"
+#include "player_list.h"
+#include "ui.h"
 
 void player_list_malloc(struct player_list **player_list) {
   if (!(*player_list = malloc(sizeof(struct player_list)))) {
@@ -137,7 +138,8 @@ void player_list_update(struct player_list **player_list,
   /* FIXME: in the future, when a player moves the server will not respond with the
    * entire player list, so we'll be able to refresh the moving player's message
    * list more intelligently than erasing and drawing the list for every player
-   * in the list.*/
+   * in the list.
+   */
   for (iterator = *player_list; iterator; iterator = iterator->next) {
     ui_erase_player_message_list(iterator->player);
   }
