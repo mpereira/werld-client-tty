@@ -19,6 +19,8 @@ TODO
   list more intelligently than erasing and drawing the list for every player
   in the list.
 
+* fix broken messages once and for all.
+
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.
