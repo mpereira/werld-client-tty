@@ -134,6 +134,14 @@ void player_list_update(struct player_list **player_list,
 
   if (number_of_players <= 0) return;
 
+  /* FIXME: in the future, when a player moves the server will not respond with the
+   * entire player list, so we'll be able to refresh the moving player's message
+   * list more intelligently than erasing and drawing the list for every player
+   * in the list.*/
+  for (iterator = *player_list; iterator; iterator = iterator->next) {
+    ui_erase_player_message_list(iterator->player);
+  }
+
   player_list_init(&new_player_list);
 
   for (int i = 0; i < number_of_players; i++) {
@@ -155,6 +163,10 @@ void player_list_update(struct player_list **player_list,
     } else {
       player_list_add_player(player_list, iterator->player);
     }
+    /* See FIXME above related to the server responding with the entire player
+     * list when a client send its state.
+     * */
+    ui_draw_player_message_list(iterator->player);
   }
 
   for (iterator = *player_list; iterator; iterator = iterator->next) {
