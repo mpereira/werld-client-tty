@@ -15,6 +15,10 @@ void message_bar_new(WINDOW **message_bar_window) {
                                MESSAGE_BAR_STARTING_X);
 }
 
+void message_bar_init(WINDOW *window) {
+  keypad(window, true);
+}
+
 void message_bar_del(WINDOW *message_bar_window) {
   delwin(message_bar_window);
 }

@@ -43,7 +43,7 @@ int main(int argc, const char *argv[]) {
 
   initscr();
   cbreak();
-  keypad(stdscr, true);
+  curs_set(false);
 
   while (!tty_term_size_ok()) {
     clear();
@@ -56,6 +56,7 @@ int main(int argc, const char *argv[]) {
   }
 
   window_new(&(werld_client.window));
+  window_init(werld_client.window);
   window_get_credentials(werld_client.window, account, password);
 
   player_malloc(&(werld_client.player));
@@ -100,6 +101,7 @@ int main(int argc, const char *argv[]) {
   werld_client.player_list->next = NULL;
 
   message_bar_new(&(werld_client.message_bar));
+  message_bar_init(werld_client.message_bar);
   status_bar_new(&(werld_client.status_bar));
 
   if (has_colors()) {

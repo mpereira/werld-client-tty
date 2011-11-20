@@ -4,6 +4,7 @@
 #include <curses.h>
 
 void message_bar_new(WINDOW **);
+void message_bar_init(WINDOW *);
 void message_bar_del(WINDOW *);
 void message_bar_getstr(WINDOW *, char *);
 

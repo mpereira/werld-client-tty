@@ -44,6 +44,10 @@ void window_new(WINDOW **window) {
                    WINDOW_STARTING_X);
 }
 
+void window_init(WINDOW *window) {
+  keypad(window, true);
+}
+
 void window_del(WINDOW *window) {
   delwin(window);
 }
