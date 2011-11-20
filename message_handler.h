@@ -1,11 +1,6 @@
 #ifndef WERLD_MESSAGE_HANDLER_H
 #define WERLD_MESSAGE_HANDLER_H
 
-#include <stddef.h>
-#include <string.h>
-#include <unistd.h>
-
-#include "client.h"
 #include "player.h"
 
 int message_handler_handle_player_message(void);
