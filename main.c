@@ -19,6 +19,8 @@ int main(int argc, const char *argv[]) {
   int key;
   struct timeval timeout;
 
+  (void) argc;
+
   /* FIXME: parse config options from command-line arguments. */
   werld_client.log_level = WERLD_CLIENT_DEBUG;
   werld_client.log_file = NULL;
