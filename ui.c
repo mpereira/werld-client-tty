@@ -37,8 +37,11 @@ void ui_erase_player_list(const struct player_list *player_list) {
 
 /* FIXME: refactor and don't depend on werld_client.player_list. */
 void ui_draw_player_message_list(const struct player *player) {
+  int y, x;
   struct message_list *message_list;
   struct player_list *player_list = werld_client.player_list;
+
+  if (!player) return;
 
   message_list = NULL;
   for (; player_list; player_list = player_list->next) {
@@ -47,26 +50,24 @@ void ui_draw_player_message_list(const struct player *player) {
     }
   }
 
-  int y, x;
-  if (player) {
-    y = player->y;
-    x = player->x;
-  }
+  y = player->y;
+  x = player->x;
 
   for (; message_list; message_list = message_list->next) {
-    if (player) {
-      mvaddstr(y - 3,
-               x - strlen(message_list->message) / 2,
-               message_list->message);
-      y--;
-    }
+    mvaddstr(y - 3,
+             x - strlen(message_list->message) / 2,
+             message_list->message);
+    y--;
   }
 }
 
 /* FIXME: refactor and don't depend on werld_client.player_list. */
 void ui_erase_player_message_list(const struct player *player) {
+  int y, x;
   struct message_list *message_list;
   struct player_list *player_list = werld_client.player_list;
+
+  if (!player) return;
 
   message_list = NULL;
   for (; player_list; player_list = player_list->next) {
@@ -75,19 +76,14 @@ void ui_erase_player_message_list(const struct player *player) {
     }
   }
 
-  int y, x;
-  if (player) {
-    y = player->y;
-    x = player->x;
-  }
+  y = player->y;
+  x = player->x;
 
   for (; message_list; message_list = message_list->next) {
-    if (player) {
-      move(y - 3, x - strlen(message_list->message) / 2);
-      for (size_t i = 0; i < strlen(message_list->message); i++) {
-        addch(' ');
-      }
-      y--;
+    move(y - 3, x - strlen(message_list->message) / 2);
+    for (size_t i = 0; i < strlen(message_list->message); i++) {
+      addch(' ');
     }
+    y--;
   }
 }
