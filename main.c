@@ -130,7 +130,7 @@ int main(int argc, const char *argv[]) {
       continue;
     }
     if (FD_ISSET(fileno(stdin), &read_fds)) {
-      keyboard_event(wgetch(stdscr));
+      keyboard_event(wgetch(werld_client.window));
     }
     if (FD_ISSET(werld_client.message_handler_fds[0], &read_fds)) {
       if (message_handler_handle_player_message() == -1) {
