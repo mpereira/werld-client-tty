@@ -12,8 +12,6 @@ TODO
 
 * merge tty and ui?
 
-* make walking and chatting work flawlessly.
-
 * don't depend on sizeof(struct) since GCC may pad struct alignment.
 
 * in the future, when a player moves the server will not respond with the
@@ -27,3 +25,4 @@ DONE
 * make werld_client_handle_response() delegate responses.
 * create message bar.
 * merge player_message_list and player_list.
+* make walking and chatting work flawlessly.
