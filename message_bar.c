@@ -26,7 +26,8 @@ void message_bar_del(WINDOW *message_bar_window) {
 void message_bar_getstr(WINDOW *message_bar_window, char *message) {
   echo();
   curs_set(true);
-  mvwgetnstr(message_bar_window, 0, 0, message, WERLD_PLAYER_MESSAGE_BUFSIZ);
+  mvwaddch(message_bar_window, 0, 0, '>');
+  mvwgetnstr(message_bar_window, 0, 2, message, WERLD_PLAYER_MESSAGE_BUFSIZ);
   werase(message_bar_window);
   wrefresh(message_bar_window);
   curs_set(false);
