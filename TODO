@@ -23,6 +23,9 @@ TODO
 
 * using the new 'net' module breaks messages. discover why.
 
+* generate data shared between projects (e.g. response types) programatically
+  from metadata.
+
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.
