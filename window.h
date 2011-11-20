@@ -6,7 +6,8 @@
 extern const int WERLD_ACCOUNT_MAX_SIZE;
 extern const int WERLD_PASSWORD_MAX_SIZE;
 
-void window_init(WINDOW **);
+void window_new(WINDOW **);
 void window_get_credentials(WINDOW *, char *, char *);
+void window_del(WINDOW *);
 
 #endif

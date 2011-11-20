@@ -37,7 +37,7 @@ static const char *WERLD_LOGIN =
   "                                         | password: ____________________ |\n"
   "                                         +--------------------------------+\n";
 
-void window_init(WINDOW **window) {
+void window_new(WINDOW **window) {
   *window = newwin(WINDOW_LINES,
                    WINDOW_COLUMNS,
                    WINDOW_STARTING_Y,
@@ -63,4 +63,8 @@ void window_get_credentials(WINDOW *window, char *account, char *password) {
   noecho();
   werase(window);
   wrefresh(window);
+}
+
+void window_del(WINDOW *window) {
+  delwin(window);
 }

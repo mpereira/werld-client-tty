@@ -22,11 +22,15 @@ static int _message_bar_y(void) {
   return(y - 2);
 }
 
-void message_bar_init(WINDOW **message_bar_window) {
+void message_bar_new(WINDOW **message_bar_window) {
   *message_bar_window = newwin(MESSAGE_BAR_LINES,
                                MESSAGE_BAR_COLUMNS,
                                MESSAGE_BAR_STARTING_Y,
                                MESSAGE_BAR_STARTING_X);
+}
+
+void message_bar_del(WINDOW *message_bar_window) {
+  delwin(message_bar_window);
 }
 
 void message_bar_getstr(WINDOW *message_bar_window, char *message) {

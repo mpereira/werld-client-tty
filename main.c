@@ -55,7 +55,7 @@ int main(int argc, const char *argv[]) {
     refresh();
   }
 
-  window_init(&(werld_client.window));
+  window_new(&(werld_client.window));
   window_get_credentials(werld_client.window, account, password);
 
   player_malloc(&(werld_client.player));
@@ -65,6 +65,8 @@ int main(int argc, const char *argv[]) {
   free(password);
 
   if (client_connect(*(werld_client.player)) == -1) {
+    player_free(werld_client.player);
+    window_del(werld_client.window);
     endwin();
     werld_client_log(WERLD_CLIENT_INFO,
                      "%s: failed to connect to the server\n",
@@ -74,6 +76,8 @@ int main(int argc, const char *argv[]) {
 
   if (client_handle_response() == -1) {
     client_disconnect(*(werld_client.player));
+    player_free(werld_client.player);
+    window_del(werld_client.window);
     endwin();
     werld_client_log(WERLD_CLIENT_INFO,
                      "%s: connection to the server has been lost\n",
@@ -82,6 +86,10 @@ int main(int argc, const char *argv[]) {
   }
 
   if (pipe(werld_client.message_handler_fds) == -1) {
+    client_disconnect(*(werld_client.player));
+    player_free(werld_client.player);
+    window_del(werld_client.window);
+    endwin();
     perror("pipe");
     return(errno);
   }
@@ -91,8 +99,8 @@ int main(int argc, const char *argv[]) {
   werld_client.player_list->message_list = NULL;
   werld_client.player_list->next = NULL;
 
-  message_bar_init(&(werld_client.message_bar));
-  status_bar_init(&(werld_client.status_bar));
+  message_bar_new(&(werld_client.message_bar));
+  status_bar_new(&(werld_client.status_bar));
 
   if (has_colors()) {
     start_color();
@@ -133,6 +141,9 @@ int main(int argc, const char *argv[]) {
       if (client_handle_response() == -1) {
         client_disconnect(*(werld_client.player));
         player_list_free(werld_client.player_list);
+        message_bar_del(werld_client.message_bar);
+        status_bar_del(werld_client.status_bar);
+        window_del(werld_client.status_bar);
         endwin();
         werld_client_log(WERLD_CLIENT_INFO,
                          "%s: connection to the server has been lost\n",

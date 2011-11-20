@@ -5,7 +5,8 @@
 
 #include "player.h"
 
-void status_bar_init(WINDOW **);
+void status_bar_new(WINDOW **);
+void status_bar_del(WINDOW *);
 void status_bar_refresh(WINDOW *, struct player *);
 
 #endif
