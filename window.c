@@ -2,7 +2,7 @@
 
 #include "window.h"
 
-static const int WINDOW_LINES = 21;
+static const int WINDOW_LINES = 22;
 static const int WINDOW_COLUMNS = 80;
 static const int WINDOW_STARTING_Y = 0;
 static const int WINDOW_STARTING_X = 0;
