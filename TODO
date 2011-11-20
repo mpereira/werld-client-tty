@@ -21,6 +21,8 @@ TODO
 
 * fix broken messages once and for all.
 
+* don't allow players to walk across screen boundaries.
+
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.
