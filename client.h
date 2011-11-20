@@ -3,7 +3,7 @@
 
 #include "player.h"
 
-static const size_t WERLD_PLAYER_MESSAGE_BUFSIZ = 80;
+extern const size_t WERLD_PLAYER_MESSAGE_BUFSIZ;
 
 int client_connect(struct player);
 int client_disconnect(struct player);

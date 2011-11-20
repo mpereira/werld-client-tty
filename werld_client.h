@@ -7,9 +7,6 @@
 #include "player.h"
 #include "player_list.h"
 
-static const size_t WERLD_LOG_MESSAGE_BUFSIZ = 1024;
-static const size_t WERLD_BINARY_STRING_BUFSIZ = 896;
-
 enum { WERLD_CLIENT_DEBUG, WERLD_CLIENT_ERROR, WERLD_CLIENT_INFO };
 
 struct werld_client {

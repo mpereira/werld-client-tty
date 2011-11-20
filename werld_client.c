@@ -6,6 +6,7 @@
 
 #include "werld_client.h"
 
+static const size_t WERLD_LOG_MESSAGE_BUFSIZ = 1024;
 static const char *WERLD_CLIENT_LOG_LEVEL[] = { "debug", "error", "info" };
 
 struct werld_client werld_client;
@@ -33,7 +34,10 @@ void werld_client_log(int level, const char *fmt, ...) {
   fflush(log_file);
 }
 
-void werld_client_log_binary(int level, const uint8_t *binary, size_t binary_size, char *fmt, ...) {
+void werld_client_log_binary(int level,
+                             const uint8_t *binary,
+                             size_t binary_size,
+                             char *fmt, ...) {
   FILE *log_file;
   char message[WERLD_LOG_MESSAGE_BUFSIZ];
   va_list ap;

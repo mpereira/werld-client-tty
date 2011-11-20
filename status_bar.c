@@ -2,14 +2,21 @@
 
 #include "status_bar.h"
 
-int _status_bar_columns(void) {
+static const int STATUS_BAR_LINES = 1;
+#define STATUS_BAR_COLUMNS _status_bar_columns()
+#define STATUS_BAR_STARTING_Y _status_bar_y()
+static const int STATUS_BAR_STARTING_X = 0;
+
+static int _status_bar_columns(void) {
   int y, x;
+  (void) y;
   getmaxyx(stdscr, y, x);
   return(x);
 }
 
-int _status_bar_y(void) {
+static int _status_bar_y(void) {
   int y, x;
+  (void) x;
   getmaxyx(stdscr, y, x);
   return(y - 1);
 }

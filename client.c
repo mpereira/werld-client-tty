@@ -13,6 +13,8 @@
 #include "ui.h"
 #include "werld_client.h"
 
+const size_t WERLD_PLAYER_MESSAGE_BUFSIZ = 80;
+
 #ifdef WERLD_DEVELOPMENT
 static const char *WERLD_SERVER_ADDRESS = "0.0.0.0";
 #else
