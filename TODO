@@ -26,6 +26,10 @@ TODO
 * generate data shared between projects (e.g. response types) programatically
   from metadata.
 
+* don't allow empty player names on input screen.
+
+* disconsider empty message input.
+
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.
