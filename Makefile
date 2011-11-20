@@ -16,6 +16,7 @@ SRC_OBJECTS = \
               $(SRC_DIR)/net.o             \
               $(SRC_DIR)/player.o          \
               $(SRC_DIR)/player_list.o     \
+              $(SRC_DIR)/request_type.o    \
               $(SRC_DIR)/status_bar.o      \
               $(SRC_DIR)/tty.o             \
               $(SRC_DIR)/ui.o              \
@@ -28,8 +29,9 @@ endif
 
 all: werld_client
 
-client.o: client.c client.h player.h movement.h message_handler.h \
- player_list.h ui.h message_list.h werld_client.h
+client.o: client.c client.h player.h movement.h message_handler.h net.h \
+ player_list.h request_type.h message.h ui.h message_list.h \
+ werld_client.h
 keyboard.o: keyboard.c client.h player.h movement.h message.h \
  message_bar.h status_bar.h tty.h ui.h message_list.h player_list.h \
  werld_client.h window.h
@@ -38,14 +40,16 @@ main.o: main.c client.h player.h movement.h keyboard.h message_bar.h \
  window.h
 message_bar.o: message_bar.c message.h message_bar.h
 message.o: message.c
-message_handler.o: message_handler.c message_handler.h client.h player.h \
- movement.h message_list.h werld_client.h player_list.h ui.h
+message_handler.o: message_handler.c message_handler.h player.h \
+ movement.h message_list.h net.h werld_client.h player_list.h ui.h
 message_list.o: message_list.c message.h message_list.h
 movement.o: movement.c movement.h
+net.o: net.c
 player.o: player.c client.h player.h movement.h ui.h message_list.h \
  player_list.h
 player_list.o: player_list.c message_list.h player_list.h player.h \
  movement.h ui.h
+request_type.o: request_type.c
 status_bar.o: status_bar.c status_bar.h player.h movement.h
 tty.o: tty.c tty.h ui.h message_list.h player.h movement.h player_list.h \
  werld_client.h

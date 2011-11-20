@@ -11,6 +11,7 @@
 #include "net.h"
 #include "player.h"
 #include "player_list.h"
+#include "request_type.h"
 #include "ui.h"
 #include "werld_client.h"
 
@@ -21,35 +22,12 @@ static const char *WERLD_SERVER_ADDRESS = "server.werldonline.com";
 #endif
 static const char *WERLD_SERVER_PORT = "9876";
 
-static const char *WERLD_REQUEST_PLAYER     = "player";
-static const char *WERLD_REQUEST_PLAYERS    = "players";
-static const char *WERLD_REQUEST_REGISTER   = "register";
-static const char *WERLD_REQUEST_UNREGISTER = "unregister";
-static const char *WERLD_REQUEST_MESSAGE    = "message";
-
-static const size_t WERLD_RESPONSE_TYPE_BUFSIZ = 4;
-
 enum { WERLD_RESPONSE_TYPE_ERROR = -1,
        WERLD_RESPONSE_TYPE_REGISTER,
        WERLD_RESPONSE_TYPE_PLAYERS,
        WERLD_RESPONSE_TYPE_MESSAGE };
 
-#define WERLD_REQUEST_PLAYER_BUFSIZ (strlen(WERLD_REQUEST_PLAYER) + \
-                                     sizeof(struct player))
-
-#define WERLD_REQUEST_REGISTER_BUFSIZ (strlen(WERLD_REQUEST_REGISTER) + \
-                                       sizeof(struct player))
-
-#define WERLD_REQUEST_UNREGISTER_BUFSIZ (strlen(WERLD_REQUEST_UNREGISTER) + \
-                                         sizeof(struct player))
-
-#define WERLD_REQUEST_MESSAGE_BUFSIZ (strlen(WERLD_REQUEST_MESSAGE) + \
-                                      sizeof(struct player) + \
-                                      WERLD_PLAYER_MESSAGE_MAX_LENGTH)
-
-#define WERLD_REQUEST_MESSAGE_SIZE(message) (strlen(WERLD_REQUEST_MESSAGE) + \
-                                             sizeof(struct player) + \
-                                             strlen(message))
+static const size_t WERLD_RESPONSE_TYPE_BUFSIZ = 4;
 
 #define WERLD_RESPONSE_REGISTER_BUFSIZ sizeof(struct player)
 #define WERLD_RESPONSE_MESSAGE_BUFSIZ(message_length) (sizeof(struct player) + \
@@ -61,25 +39,25 @@ static void client_register(struct player player) {
   ssize_t bytes_written;
   uint8_t *data;
 
-  if (!(data = malloc(WERLD_REQUEST_REGISTER_BUFSIZ))) {
+  if (!(data = malloc(WERLD_REQUEST_TYPE_REGISTER_BUFSIZ))) {
     perror("malloc");
     exit(errno);
   }
 
   void *offset =
-    mempcpy(data, WERLD_REQUEST_REGISTER, strlen(WERLD_REQUEST_REGISTER));
+    mempcpy(data, &WERLD_REQUEST_TYPE_REGISTER, WERLD_REQUEST_TYPE_BUFSIZ);
   memcpy(offset, &player, sizeof(struct player));
 
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
-                                 WERLD_REQUEST_REGISTER_BUFSIZ)) == -1) {
+                                 WERLD_REQUEST_TYPE_REGISTER_BUFSIZ)) == -1) {
     werld_client_log(WERLD_CLIENT_ERROR, "+client+register write failed\n");
     exit(-1);
   }
 
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           data,
-                          WERLD_REQUEST_REGISTER_BUFSIZ,
+                          WERLD_REQUEST_TYPE_REGISTER_BUFSIZ,
                           "+client+register bytes written: %zd ",
                           bytes_written);
   free(data);
@@ -137,25 +115,25 @@ int client_disconnect(struct player player) {
   ssize_t bytes_written;
   uint8_t *data;
 
-  if (!(data = malloc(WERLD_REQUEST_UNREGISTER_BUFSIZ))) {
+  if (!(data = malloc(WERLD_REQUEST_TYPE_UNREGISTER_BUFSIZ))) {
     perror("malloc");
     exit(errno);
   }
 
   void *offset =
-    mempcpy(data, WERLD_REQUEST_UNREGISTER, strlen(WERLD_REQUEST_UNREGISTER));
+    mempcpy(data, &WERLD_REQUEST_TYPE_UNREGISTER, WERLD_REQUEST_TYPE_BUFSIZ);
   memcpy(offset, &player, sizeof(player));
 
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
-                                 WERLD_REQUEST_UNREGISTER_BUFSIZ)) == -1) {
+                                 WERLD_REQUEST_TYPE_UNREGISTER_BUFSIZ)) == -1) {
     werld_client_log(WERLD_CLIENT_ERROR, "+client+disconnect write failed\n");
     exit(-1);
   }
 
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           data,
-                          WERLD_REQUEST_UNREGISTER_BUFSIZ,
+                          WERLD_REQUEST_TYPE_UNREGISTER_BUFSIZ,
                           "+client+disconnect bytes written: %zd ",
                           bytes_written);
 
@@ -173,25 +151,25 @@ int client_send_player(struct player player) {
   ssize_t bytes_written;
   uint8_t *data;
 
-  if (!(data = malloc(WERLD_REQUEST_PLAYER_BUFSIZ))) {
+  if (!(data = malloc(WERLD_REQUEST_TYPE_PLAYER_BUFSIZ))) {
     perror("malloc");
     exit(errno);
   }
 
   void *offset =
-    mempcpy(data, WERLD_REQUEST_PLAYER, strlen(WERLD_REQUEST_PLAYER));
+    mempcpy(data, &WERLD_REQUEST_TYPE_PLAYER, WERLD_REQUEST_TYPE_BUFSIZ);
   memcpy(offset, &player, sizeof(struct player));
 
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
-                                 WERLD_REQUEST_PLAYER_BUFSIZ)) == -1) {
+                                 WERLD_REQUEST_TYPE_PLAYER_BUFSIZ)) == -1) {
     werld_client_log(WERLD_CLIENT_ERROR, "+client+send_player write failed\n");
     exit(-1);
   }
 
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           data,
-                          WERLD_REQUEST_PLAYER_BUFSIZ,
+                          WERLD_REQUEST_TYPE_PLAYER_BUFSIZ,
                           "+client+send_player bytes written: %zd ",
                           bytes_written);
   free(data);
@@ -203,8 +181,8 @@ int client_request_players(void) {
   ssize_t bytes_written;
 
   if ((bytes_written = net_write(werld_client.fd,
-                                 WERLD_REQUEST_PLAYERS,
-                                 strlen(WERLD_REQUEST_PLAYERS))) == -1) {
+                                 &WERLD_REQUEST_TYPE_PLAYERS,
+                                 WERLD_REQUEST_TYPE_BUFSIZ)) == -1) {
     werld_client_log(WERLD_CLIENT_ERROR, "+client+request_players write failed\n");
     exit(-1);
   }
@@ -212,6 +190,38 @@ int client_request_players(void) {
   werld_client_log(WERLD_CLIENT_DEBUG,
                    "+client+request_players bytes written: %zd\n",
                    bytes_written);
+
+  return(0);
+}
+
+int client_send_message(struct player player, const char *message) {
+  ssize_t bytes_written;
+  uint8_t *data;
+
+  if (!(data = malloc(WERLD_REQUEST_TYPE_MESSAGE_BUFSIZ(message)))) {
+    perror("malloc");
+    return(-1);
+  }
+
+  void *offset =
+    mempcpy(data, &WERLD_REQUEST_TYPE_MESSAGE, WERLD_REQUEST_TYPE_BUFSIZ);
+  /* FIXME: Don't send entire player. */
+  offset = mempcpy(offset, &player, sizeof(player));
+  memcpy(offset, message, strlen(message));
+
+  if ((bytes_written = net_write(werld_client.fd,
+                                 data,
+                                 WERLD_REQUEST_TYPE_MESSAGE_BUFSIZ(message))) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR, "+client+send_message write failed\n");
+    exit(-1);
+  }
+
+  werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                          data,
+                          WERLD_REQUEST_TYPE_MESSAGE_BUFSIZ(message),
+                          "+client+send_message bytes written: %zd ",
+                          bytes_written);
+  free(data);
 
   return(0);
 }
@@ -364,38 +374,6 @@ int client_handle_response(void) {
     wrefresh(werld_client.window);
     free(payload);
   }
-
-  return(0);
-}
-
-int client_send_message(struct player player, const char *message) {
-  ssize_t bytes_written;
-  uint8_t *data;
-
-  if (!(data = malloc(WERLD_REQUEST_MESSAGE_SIZE(message)))) {
-    perror("malloc");
-    return(-1);
-  }
-
-  void *offset =
-    mempcpy(data, WERLD_REQUEST_MESSAGE, strlen(WERLD_REQUEST_MESSAGE));
-  /* FIXME: Don't send entire player. */
-  offset = mempcpy(offset, &player, sizeof(player));
-  memcpy(offset, message, strlen(message));
-
-  if ((bytes_written = net_write(werld_client.fd,
-                                 data,
-                                 WERLD_REQUEST_MESSAGE_SIZE(message))) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+send_message write failed\n");
-    exit(-1);
-  }
-
-  werld_client_log_binary(WERLD_CLIENT_DEBUG,
-                          data,
-                          WERLD_REQUEST_MESSAGE_SIZE(message),
-                          "+client+send_message bytes written: %zd ",
-                          bytes_written);
-  free(data);
 
   return(0);
 }
