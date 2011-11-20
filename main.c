@@ -10,6 +10,7 @@
 #include "message_handler.h"
 #include "player.h"
 #include "player_list.h"
+#include "status_bar.h"
 #include "tty.h"
 #include "werld_client.h"
 
@@ -48,15 +49,6 @@ int main(int argc, const char *argv[]) {
   clear();
   refresh();
 
-  message_bar_init(&(werld_client.message_bar));
-
-  if (has_colors()) {
-    start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLUE);
-    wbkgd(werld_client.message_bar, COLOR_PAIR(1));
-  }
-  wrefresh(werld_client.message_bar);
-
   player_malloc(&(werld_client.player));
   player_set(werld_client.player, 0, name, 0, 0);
 
@@ -86,6 +78,16 @@ int main(int argc, const char *argv[]) {
   werld_client.player_list->player = werld_client.player;
   werld_client.player_list->message_list = NULL;
   werld_client.player_list->next = NULL;
+
+  message_bar_init(&(werld_client.message_bar));
+  status_bar_init(&(werld_client.status_bar));
+
+  if (has_colors()) {
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_BLUE);
+    wbkgd(werld_client.status_bar, COLOR_PAIR(1));
+  }
+  status_bar_refresh(werld_client.status_bar, werld_client.player);
 
   fd_set master_fds, read_fds;
 

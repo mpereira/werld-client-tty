@@ -14,6 +14,7 @@ enum { WERLD_CLIENT_DEBUG, WERLD_CLIENT_ERROR, WERLD_CLIENT_INFO };
 
 struct werld_client {
   WINDOW *message_bar;
+  WINDOW *status_bar;
   char *log_file;
   double player_messages_lifetime;
   int fd;
