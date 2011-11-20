@@ -44,6 +44,10 @@ void window_new(WINDOW **window) {
                    WINDOW_STARTING_X);
 }
 
+void window_del(WINDOW *window) {
+  delwin(window);
+}
+
 /* FIXME: make this resistant to terminal resizing. */
 void window_get_credentials(WINDOW *window, char *account, char *password) {
   waddstr(window, WERLD_LOGIN);
@@ -63,8 +67,4 @@ void window_get_credentials(WINDOW *window, char *account, char *password) {
   noecho();
   werase(window);
   wrefresh(window);
-}
-
-void window_del(WINDOW *window) {
-  delwin(window);
 }

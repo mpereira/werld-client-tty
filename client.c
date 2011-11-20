@@ -264,7 +264,7 @@ int client_handle_response(void) {
     free(data);
     memcpy(werld_client.player, &player, sizeof(struct player));
     ui_draw_player(*(werld_client.player));
-    refresh();
+    wrefresh(werld_client.window);
   } else if (response_type == WERLD_RESPONSE_TYPE_MESSAGE) {
     char *message;
     struct player player;
@@ -362,7 +362,7 @@ int client_handle_response(void) {
                        (void *) payload,
                        number_of_players);
     ui_draw_player_list(werld_client.player_list);
-    refresh();
+    wrefresh(werld_client.window);
     free(payload);
   }
 

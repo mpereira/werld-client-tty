@@ -42,7 +42,7 @@ void keyboard_event(int key) {
       ui_erase_player_message_list(werld_client.player);
       player_move(werld_client.player, movement_direction(key));
       ui_draw_player_message_list(werld_client.player);
-      refresh();
+      wrefresh(werld_client.window);
       break;
     case KEY_RESIZE:
       tty_handle_resize();

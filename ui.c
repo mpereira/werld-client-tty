@@ -7,20 +7,20 @@
 #include "werld_client.h"
 
 void ui_draw_player(struct player player) {
-  move(player.y - 1, (player.x - strlen(player.name) / 2) -1);
-  addch('(');
-  addstr(player.name);
-  addch(')');
-  mvaddch(player.y, player.x, '@');
+  wmove(werld_client.window, player.y - 1, (player.x - strlen(player.name) / 2) -1);
+  waddch(werld_client.window, '(');
+  waddstr(werld_client.window, player.name);
+  waddch(werld_client.window, ')');
+  mvwaddch(werld_client.window, player.y, player.x, '@');
 }
 
 void ui_erase_player(struct player player) {
-  move(player.y - 1, (player.x - strlen(player.name) / 2) -1);
+  wmove(werld_client.window, player.y - 1, (player.x - strlen(player.name) / 2) -1);
   for (unsigned int i = 0; i < strlen(player.name) + 2; i++) {
-    addch(' ');
+    waddch(werld_client.window, ' ');
   }
-  move(player.y, player.x);
-  addch(' ');
+  wmove(werld_client.window, player.y, player.x);
+  waddch(werld_client.window, ' ');
 }
 
 void ui_draw_player_list(const struct player_list *player_list) {
@@ -54,9 +54,10 @@ void ui_draw_player_message_list(const struct player *player) {
   x = player->x;
 
   for (; message_list; message_list = message_list->next) {
-    mvaddstr(y - 3,
-             x - strlen(message_list->message) / 2,
-             message_list->message);
+    mvwaddstr(werld_client.window,
+              y - 3,
+              x - strlen(message_list->message) / 2,
+              message_list->message);
     y--;
   }
 }
@@ -80,9 +81,9 @@ void ui_erase_player_message_list(const struct player *player) {
   x = player->x;
 
   for (; message_list; message_list = message_list->next) {
-    move(y - 3, x - strlen(message_list->message) / 2);
+    wmove(werld_client.window, y - 3, x - strlen(message_list->message) / 2);
     for (size_t i = 0; i < strlen(message_list->message); i++) {
-      addch(' ');
+      waddch(werld_client.window, ' ');
     }
     y--;
   }
