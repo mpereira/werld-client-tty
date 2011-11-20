@@ -9,6 +9,7 @@
 
 #include "message_handler.h"
 #include "message_list.h"
+#include "net.h"
 #include "werld_client.h"
 #include "ui.h"
 
@@ -25,11 +26,11 @@ int message_handler_handle_player_message(void) {
   ssize_t bytes_read;
   struct player player;
 
-  if ((bytes_read = read(werld_client.message_handler_fds[0],
-                         &message_size,
-                         sizeof(size_t))) < 0) {
-    perror("read");
-    return(-1);
+  if ((bytes_read = net_read(werld_client.message_handler_fds[0],
+                             &message_size,
+                             sizeof(size_t))) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR, "+message_handler+handle_player_message read failed\n");
+    exit(-1);
   }
 
   if (bytes_read == 0) return(-1);
@@ -45,11 +46,11 @@ int message_handler_handle_player_message(void) {
     exit(errno);
   }
 
-  if ((bytes_read = read(werld_client.message_handler_fds[0],
-                         data,
-                         WERLD_MESSAGE_HANDLER_READ_BUFSIZ(message_size))) < 0) {
-    perror("read");
-    return(-1);
+  if ((bytes_read = net_read(werld_client.message_handler_fds[0],
+                             data,
+                             WERLD_MESSAGE_HANDLER_READ_BUFSIZ(message_size))) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR, "+message_handler+handle_player_message read failed\n");
+    exit(-1);
   }
 
   if (bytes_read == 0) return(-1);
@@ -89,12 +90,13 @@ void message_handler_handle_incoming_message(const struct player *player,
   offset = mempcpy(offset, player, sizeof(struct player));
   memcpy(offset, message, message_size);
 
-  if ((bytes_written = write(werld_client.message_handler_fds[1],
-                             data,
-                             WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message))) < 0) {
-    perror("write");
-    exit(errno);
+  if ((bytes_written = net_write(werld_client.message_handler_fds[1],
+                                 data,
+                                 WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message))) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR, "+message_handler+handle_incoming_message write failed\n");
+    exit(-1);
   }
+
 
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           (uint8_t *) data,
