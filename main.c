@@ -42,7 +42,7 @@ int main(int argc, const char *argv[]) {
   clear();
   mvaddstr(0, 0, "What's your name? ");
   refresh();
-  wgetnstr(stdscr, name, sizeof(name));
+  wgetnstr(stdscr, name, WERLD_PLAYER_NAME_BUFSIZ);
   curs_set(false);
   noecho();
   clear();
