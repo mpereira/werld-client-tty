@@ -5,11 +5,11 @@
 
 #include "movement.h"
 
-enum { WERLD_PLAYER_NAME_BUFSIZ = 20 };
+enum { WERLD_PLAYER_NAME_MAX_SIZE = 20 };
 
 struct player {
   uint32_t id;
-  char name[WERLD_PLAYER_NAME_BUFSIZ];
+  char name[WERLD_PLAYER_NAME_MAX_SIZE];
   uint32_t y;
   uint32_t x;
 };

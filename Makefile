@@ -18,6 +18,7 @@ SRC_OBJECTS = \
               $(SRC_DIR)/tty.o             \
               $(SRC_DIR)/ui.o              \
               $(SRC_DIR)/werld_client.o    \
+              $(SRC_DIR)/window.o          \
 
 ifeq ($(WERLD_ENV), development)
   CFLAGS += -DWERLD_DEVELOPMENT

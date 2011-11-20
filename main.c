@@ -1,7 +1,9 @@
 #include <curses.h>
 #include <errno.h>
+#include <malloc.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 
 #include "client.h"
@@ -13,12 +15,25 @@
 #include "status_bar.h"
 #include "tty.h"
 #include "werld_client.h"
+#include "window.h"
 
 int main(int argc, const char *argv[]) {
-  char name[WERLD_PLAYER_NAME_BUFSIZ];
+  char *account;
+  char *password;
   int key;
   struct timeval timeout;
 
+  if (!(account = malloc(WERLD_ACCOUNT_MAX_SIZE))) {
+    perror("malloc");
+    exit(errno);
+  }
+
+  if (!(password = malloc(WERLD_PASSWORD_MAX_SIZE))) {
+    perror("malloc");
+    exit(errno);
+  }
+
+  /* FIXME: remove stupid warning. */
   (void) argc;
 
   /* FIXME: parse config options from command-line arguments. */
@@ -40,19 +55,14 @@ int main(int argc, const char *argv[]) {
     refresh();
   }
 
-  /* FIXME: make this resistant to terminal resizing. */
-  curs_set(true);
-  clear();
-  mvaddstr(0, 0, "What's your name? ");
-  refresh();
-  wgetnstr(stdscr, name, WERLD_PLAYER_NAME_BUFSIZ);
-  curs_set(false);
-  noecho();
-  clear();
-  refresh();
+  window_init(&(werld_client.window));
+  window_get_credentials(werld_client.window, account, password);
 
   player_malloc(&(werld_client.player));
-  player_set(werld_client.player, 0, name, 0, 0);
+  player_set(werld_client.player, 0, account, 0, 0);
+
+  free(account);
+  free(password);
 
   if (client_connect(*(werld_client.player)) == -1) {
     endwin();
