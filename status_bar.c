@@ -3,23 +3,9 @@
 #include "status_bar.h"
 
 static const int STATUS_BAR_LINES = 1;
-#define STATUS_BAR_COLUMNS _status_bar_columns()
-#define STATUS_BAR_STARTING_Y _status_bar_y()
+static const int STATUS_BAR_COLUMNS = 80;
+static const int STATUS_BAR_STARTING_Y = 23;
 static const int STATUS_BAR_STARTING_X = 0;
-
-static int _status_bar_columns(void) {
-  int y, x;
-  (void) y;
-  getmaxyx(stdscr, y, x);
-  return(x);
-}
-
-static int _status_bar_y(void) {
-  int y, x;
-  (void) x;
-  getmaxyx(stdscr, y, x);
-  return(y - 1);
-}
 
 void status_bar_new(WINDOW **status_bar_window) {
   *status_bar_window = newwin(STATUS_BAR_LINES,
