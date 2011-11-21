@@ -64,9 +64,12 @@ static void client_register(struct player player) {
 }
 
 int client_connect(struct player player) {
+  int keepalive;
   int status;
-  struct addrinfo hints;
+  struct addrinfo *iterator;
   struct addrinfo *results;
+  struct addrinfo hints;
+  struct timeval timeout;
 
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_UNSPEC;
@@ -81,8 +84,6 @@ int client_connect(struct player player) {
                      gai_strerror(status));
     exit(errno);
   }
-
-  struct addrinfo *iterator;
 
   for (iterator = results; iterator; iterator = iterator->ai_next) {
     if ((werld_client.fd = socket(iterator->ai_family,
@@ -104,6 +105,25 @@ int client_connect(struct player player) {
   freeaddrinfo(results);
 
   if (iterator) {
+    keepalive = 1;
+    timeout.tv_sec = 1;
+    timeout.tv_usec = 0;
+    if (setsockopt(werld_client.fd,
+                   SOL_SOCKET,
+                   SO_KEEPALIVE,
+                   &keepalive,
+                   sizeof(keepalive)) == -1) {
+      perror("setsockopt");
+      exit(errno);
+    }
+    if (setsockopt(werld_client.fd,
+                   SOL_SOCKET,
+                   SO_RCVTIMEO,
+                   &timeout,
+                   sizeof(timeout)) == -1) {
+      perror("setsockopt");
+      exit(errno);
+    }
     client_register(player);
     return(0);
   }
