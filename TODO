@@ -21,8 +21,6 @@ TODO
 
 * work with wide characters.
 
-* using the new 'net' module breaks messages. discover why.
-
 * generate data shared between projects (e.g. response types) programatically
   from metadata.
 
@@ -39,3 +37,4 @@ DONE
 * make walking and chatting work flawlessly.
 * create status bar.
 * iterate on read()s and write()s and make sure all data is transmitted.
+* using the new 'net' module breaks messages. discover why.
