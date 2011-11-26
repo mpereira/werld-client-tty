@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "message_list.h"
 #include "player_list.h"
 #include "ui.h"
 

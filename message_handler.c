@@ -84,9 +84,9 @@ void message_handler_handle_incoming_message(const struct player *player,
     exit(errno);
   }
 
-  void *offset = mempcpy(data, &message_size, sizeof(size_t));
-  offset = mempcpy(offset, player, sizeof(struct player));
-  memcpy(offset, message, message_size);
+  char *offset = memcpy(data, &message_size, sizeof(size_t));
+  offset = memcpy(offset + sizeof(size_t), player, sizeof(struct player));
+  memcpy(offset + sizeof(struct player), message, message_size);
 
   if ((bytes_written = net_write(werld_client.message_handler_fds[1],
                                  data,

@@ -45,9 +45,8 @@ static void client_register(struct player player) {
     exit(errno);
   }
 
-  void *offset =
-    mempcpy(data, &WERLD_REQUEST_TYPE_REGISTER, WERLD_REQUEST_TYPE_BUFSIZ);
-  memcpy(offset, &player, sizeof(struct player));
+  memcpy(data, &WERLD_REQUEST_TYPE_REGISTER, WERLD_REQUEST_TYPE_BUFSIZ);
+  memcpy(data + WERLD_REQUEST_TYPE_BUFSIZ, &player, sizeof(struct player));
 
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
@@ -121,9 +120,8 @@ int client_disconnect(struct player player) {
     exit(errno);
   }
 
-  void *offset =
-    mempcpy(data, &WERLD_REQUEST_TYPE_UNREGISTER, WERLD_REQUEST_TYPE_BUFSIZ);
-  memcpy(offset, &player, sizeof(player));
+  memcpy(data, &WERLD_REQUEST_TYPE_UNREGISTER, WERLD_REQUEST_TYPE_BUFSIZ);
+  memcpy(data + WERLD_REQUEST_TYPE_BUFSIZ, &player, sizeof(player));
 
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
@@ -157,9 +155,8 @@ int client_send_player(struct player player) {
     exit(errno);
   }
 
-  void *offset =
-    mempcpy(data, &WERLD_REQUEST_TYPE_PLAYER, WERLD_REQUEST_TYPE_BUFSIZ);
-  memcpy(offset, &player, sizeof(struct player));
+  memcpy(data, &WERLD_REQUEST_TYPE_PLAYER, WERLD_REQUEST_TYPE_BUFSIZ);
+  memcpy(data + WERLD_REQUEST_TYPE_BUFSIZ, &player, sizeof(struct player));
 
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
@@ -204,11 +201,11 @@ int client_send_message(struct player player, const char *message) {
     return(-1);
   }
 
-  void *offset =
-    mempcpy(data, &WERLD_REQUEST_TYPE_MESSAGE, WERLD_REQUEST_TYPE_BUFSIZ);
+  char *offset =
+    memcpy(data, &WERLD_REQUEST_TYPE_MESSAGE, WERLD_REQUEST_TYPE_BUFSIZ);
   /* FIXME: Don't send entire player. */
-  offset = mempcpy(offset, &player, sizeof(player));
-  memcpy(offset, message, strlen(message));
+  offset = memcpy(offset + WERLD_REQUEST_TYPE_BUFSIZ, &player, sizeof(player));
+  memcpy(offset + sizeof(player), message, strlen(message));
 
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
