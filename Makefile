@@ -1,6 +1,6 @@
 CC      = gcc
 CFLAGS  = -O3 -Wall -Wextra -pedantic -std=c99 -g -D_GNU_SOURCE
-LDFLAGS = -lncursesw
+LDFLAGS = -lncurses
 
 EXECUTABLE  = werld_client
 SRC_DIR     = .
