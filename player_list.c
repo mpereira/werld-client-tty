@@ -1,5 +1,4 @@
 #include <errno.h>
-#include <malloc.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
