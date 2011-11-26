@@ -111,7 +111,7 @@ int client_connect(struct player player) {
   return(-1);
 }
 
-int client_disconnect(struct player player) {
+int client_disconnect(struct player *player) {
   ssize_t bytes_written;
   uint8_t *data;
 
@@ -121,7 +121,7 @@ int client_disconnect(struct player player) {
   }
 
   memcpy(data, &WERLD_REQUEST_TYPE_UNREGISTER, WERLD_REQUEST_TYPE_BUFSIZ);
-  memcpy(data + WERLD_REQUEST_TYPE_BUFSIZ, &player, sizeof(player));
+  memcpy(data + WERLD_REQUEST_TYPE_BUFSIZ, player, sizeof(struct player));
 
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
