@@ -1,4 +1,3 @@
-#include <curses.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +9,7 @@
 #include "net.h"
 #include "werld_client.h"
 #include "ui.h"
+#include "window.h"
 
 #define WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message_size) \
   (sizeof(size_t) + sizeof(struct player) + message_size)
@@ -65,7 +65,7 @@ int message_handler_handle_player_message(void) {
   ui_erase_player_message_list(&player);
   player_list_add_message(&(werld_client.player_list), message, player.id);
   ui_draw_player_message_list(&player);
-  wrefresh(werld_client.window);
+  window_refresh(werld_client.window);
   free(message);
   free(data);
 

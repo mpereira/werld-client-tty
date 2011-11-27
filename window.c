@@ -1,7 +1,5 @@
 #include <curses.h>
 
-#include "window.h"
-
 static const int WINDOW_LINES = 22;
 static const int WINDOW_COLUMNS = 80;
 static const int WINDOW_STARTING_Y = 0;
@@ -50,6 +48,10 @@ void window_init(WINDOW *window) {
 
 void window_del(WINDOW *window) {
   delwin(window);
+}
+
+void window_refresh(WINDOW *window) {
+  wrefresh(window);
 }
 
 /* FIXME: make this resistant to terminal resizing. */

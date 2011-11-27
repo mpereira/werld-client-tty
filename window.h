@@ -10,5 +10,6 @@ void window_new(WINDOW **);
 void window_init(WINDOW *);
 void window_get_credentials(WINDOW *, char *, char *);
 void window_del(WINDOW *);
+void window_refresh(WINDOW *);
 
 #endif
