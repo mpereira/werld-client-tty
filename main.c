@@ -1,10 +1,8 @@
 #include <curses.h>
 #include <errno.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/select.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 #include "client.h"
@@ -34,22 +32,22 @@ int main(int argc, const char *argv[]) {
     exit(errno);
   }
 
-  /* FIXME: remove stupid warning. */
+  /* FIXME: this removes a stupid warning. */
   (void) argc;
+
+  werld_client_init(&werld_client);
 
   /* FIXME: parse config options from command-line arguments. */
   werld_client.log_level = WERLD_CLIENT_DEBUG;
   werld_client.log_file = NULL;
   werld_client.player_messages_lifetime = 3;
 
-  initscr();
-  cbreak();
-  curs_set(false);
-
   while (!tty_term_size_ok()) {
     clear();
     mvaddstr(1, 1, WERLD_SMALL_TERM_MSG);
     if ((key = getch()) == 'q' || key == 'Q') {
+      free(account);
+      free(password);
       endwin();
       return(0);
     }
@@ -67,9 +65,7 @@ int main(int argc, const char *argv[]) {
   free(password);
 
   if (client_connect(*(werld_client.player)) == -1) {
-    player_free(werld_client.player);
-    window_del(werld_client.window);
-    endwin();
+    werld_client_kill(&werld_client);
     werld_client_log(WERLD_CLIENT_INFO,
                      "%s: failed to connect to the server\n",
                      argv[0]);
@@ -77,10 +73,7 @@ int main(int argc, const char *argv[]) {
   }
 
   if (client_handle_response() == -1) {
-    client_disconnect(*(werld_client.player));
-    player_free(werld_client.player);
-    window_del(werld_client.window);
-    endwin();
+    werld_client_kill(&werld_client);
     werld_client_log(WERLD_CLIENT_INFO,
                      "%s: connection to the server has been lost\n",
                      argv[0]);
@@ -88,10 +81,6 @@ int main(int argc, const char *argv[]) {
   }
 
   if (pipe(werld_client.message_handler_fds) == -1) {
-    client_disconnect(*(werld_client.player));
-    player_free(werld_client.player);
-    window_del(werld_client.window);
-    endwin();
     perror("pipe");
     return(errno);
   }
@@ -142,12 +131,7 @@ int main(int argc, const char *argv[]) {
     }
     if (FD_ISSET(werld_client.fd, &read_fds)) {
       if (client_handle_response() == -1) {
-        client_disconnect(*(werld_client.player));
-        player_list_free(werld_client.player_list);
-        message_bar_del(werld_client.message_bar);
-        status_bar_del(werld_client.status_bar);
-        window_del(werld_client.status_bar);
-        endwin();
+        werld_client_kill(&werld_client);
         werld_client_log(WERLD_CLIENT_INFO,
                          "%s: connection to the server has been lost\n",
                          argv[0]);

@@ -7,6 +7,7 @@
 #include "movement.h"
 #include "player.h"
 #include "ui.h"
+#include "werld_client.h"
 
 void player_malloc(struct player **player) {
   if (!(*player = malloc(sizeof(struct player)))) {
@@ -15,8 +16,9 @@ void player_malloc(struct player **player) {
   }
 }
 
-void player_free(struct player *player) {
-  free(player);
+void player_free(struct player **player) {
+  free(*player);
+  *player = NULL;
 }
 
 void player_set(struct player *player,

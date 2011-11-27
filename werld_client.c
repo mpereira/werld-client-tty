@@ -1,10 +1,16 @@
+#include <curses.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 #include <time.h>
 
+#include "client.h"
+#include "message_bar.h"
+#include "message_handler.h"
+#include "status_bar.h"
 #include "werld_client.h"
+#include "window.h"
 
 static const size_t WERLD_LOG_MESSAGE_BUFSIZ = 1024;
 static const char *WERLD_CLIENT_LOG_LEVEL[] = { "debug", "error", "info" };
@@ -61,4 +67,44 @@ void werld_client_log_binary(int level,
   }
   fprintf(log_file, "%hd", binary[binary_size]);
   fprintf(log_file, ">>\n");
+  fflush(log_file);
+  fclose(log_file);
+}
+
+void werld_client_init(struct werld_client *werld_client) {
+  werld_client->message_bar = NULL;
+  werld_client->status_bar = NULL;
+  werld_client->window = NULL;
+
+  werld_client->log_file = NULL;
+
+  werld_client->fd = -1;
+  for (int i = 0; i < 2; i++) werld_client->message_handler_fds[i] = -1;
+
+  werld_client->world_map = NULL;
+  werld_client->player = NULL;
+  werld_client->player_list = NULL;
+
+  initscr();
+  cbreak();
+  curs_set(false);
+}
+
+void werld_client_kill(struct werld_client *werld_client) {
+  if (werld_client->message_bar) message_bar_del(werld_client->message_bar);
+  if (werld_client->status_bar) status_bar_del(werld_client->status_bar);
+  if (werld_client->window) window_del(werld_client->window);
+
+  if (werld_client->log_file) free(werld_client->log_file);
+
+  if (werld_client->fd != -1) client_disconnect(werld_client->player);
+
+  for (int i = 0; i < 2; i++)
+    if (werld_client->message_handler_fds[i] != -1)
+      message_handler_close(werld_client->message_handler_fds[i]);
+
+  if (werld_client->world_map) map_free(&(werld_client->world_map));
+  if (werld_client->player_list) player_list_free(&(werld_client->player_list));
+
+  endwin();
 }

@@ -15,7 +15,7 @@ struct player {
 };
 
 void player_malloc(struct player **);
-void player_free(struct player *);
+void player_free(struct player **);
 void player_set(struct player *, int, const char *, uint32_t, uint32_t);
 void player_move(struct player *, enum movement);
 

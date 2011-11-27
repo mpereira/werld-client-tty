@@ -74,14 +74,14 @@ int message_list_remove(struct message_list **message_list, const char *message)
         tmp = iterator->next;
         iterator->next = iterator->next->next;
         free(tmp->message);
+        tmp->message = NULL;
         free(tmp);
         return(1);
       }
     }
   } else {
     if (!strcmp((*message_list)->message, message)) {
-      message_list_free(*message_list);
-      *message_list = NULL;
+      message_list_free(message_list);
       return(1);
     }
   }
@@ -89,13 +89,18 @@ int message_list_remove(struct message_list **message_list, const char *message)
   return(0);
 }
 
-void message_list_free(struct message_list *message_list) {
+void message_list_free(struct message_list **message_list) {
   struct message_list *tmp;
+  struct message_list *iterator;
 
-  while (message_list) {
-    tmp = message_list;
-    free(message_list->message);
-    message_list = message_list->next;
+  iterator = *message_list;
+
+  while (iterator) {
+    tmp = iterator;
+    free(iterator->message);
+    iterator = iterator->next;
     free(tmp);
   }
+
+  *message_list = NULL;
 }

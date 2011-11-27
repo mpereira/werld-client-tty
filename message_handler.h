@@ -6,5 +6,6 @@
 int message_handler_handle_player_message(void);
 void message_handler_handle_incoming_message(const struct player *, const char *);
 void message_handler_sweep_messages(void);
+void message_handler_close(int);
 
 #endif

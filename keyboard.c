@@ -7,7 +7,6 @@
 #include "message_bar.h"
 #include "movement.h"
 #include "player.h"
-#include "status_bar.h"
 #include "tty.h"
 #include "ui.h"
 #include "werld_client.h"
@@ -17,12 +16,7 @@ void keyboard_event(int key) {
   char *message;
 
   if (key == 'q' || key == 'Q') {
-    client_disconnect(*(werld_client.player));
-    player_list_free(werld_client.player_list);
-    message_bar_del(werld_client.message_bar);
-    status_bar_del(werld_client.status_bar);
-    window_del(werld_client.status_bar);
-    endwin();
+    werld_client_kill(&werld_client);
     exit(0);
   }
   if (tty_term_size_ok()) {

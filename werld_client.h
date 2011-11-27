@@ -26,5 +26,7 @@ extern struct werld_client werld_client;
 
 void werld_client_log(int, const char *, ...);
 void werld_client_log_binary(int, const uint8_t *, size_t, char *, ...);
+void werld_client_init(struct werld_client *);
+void werld_client_kill(struct werld_client *);
 
 #endif

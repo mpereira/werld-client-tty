@@ -3,12 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
-#include "message_handler.h"
 #include "message_list.h"
 #include "net.h"
-#include "werld_client.h"
 #include "ui.h"
+#include "werld_client.h"
 #include "window.h"
 
 #define WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message_size) \
@@ -27,6 +27,7 @@ int message_handler_handle_player_message(void) {
   if ((bytes_read = net_read(werld_client.message_handler_fds[0],
                              &message_size,
                              sizeof(size_t))) == -1) {
+    werld_client_kill(&werld_client);
     werld_client_log(WERLD_CLIENT_ERROR, "+message_handler+handle_player_message read failed\n");
     exit(-1);
   }
@@ -47,6 +48,7 @@ int message_handler_handle_player_message(void) {
   if ((bytes_read = net_read(werld_client.message_handler_fds[0],
                              data,
                              WERLD_MESSAGE_HANDLER_READ_BUFSIZ(message_size))) == -1) {
+    werld_client_kill(&werld_client);
     werld_client_log(WERLD_CLIENT_ERROR, "+message_handler+handle_player_message read failed\n");
     exit(-1);
   }
@@ -91,6 +93,7 @@ void message_handler_handle_incoming_message(const struct player *player,
   if ((bytes_written = net_write(werld_client.message_handler_fds[1],
                                  data,
                                  WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message_size))) == -1) {
+    werld_client_kill(&werld_client);
     werld_client_log(WERLD_CLIENT_ERROR, "+message_handler+handle_incoming_message write failed\n");
     exit(-1);
   }
@@ -125,5 +128,12 @@ void message_handler_sweep_messages(void) {
         wrefresh(werld_client.window);
       }
     }
+  }
+}
+
+void message_handler_close(int fd) {
+  if (close(fd)) {
+    perror("close");
+    exit(errno);
   }
 }
