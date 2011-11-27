@@ -36,7 +36,7 @@ static const size_t WERLD_RESPONSE_TYPE_BUFSIZ = 4;
 #define WERLD_RESPONSE_PLAYERS_BUFSIZ(number_of_players) (number_of_players * \
                                                           sizeof(struct player))
 
-static void client_register(struct player player) {
+static void client_request_register(struct player player) {
   ssize_t bytes_written;
   uint8_t *data;
 
@@ -63,7 +63,7 @@ static void client_register(struct player player) {
   free(data);
 }
 
-int client_connect(struct player player) {
+int client_request_connect(struct player player) {
   int status;
   struct addrinfo hints;
   struct addrinfo *results;
@@ -104,14 +104,14 @@ int client_connect(struct player player) {
   freeaddrinfo(results);
 
   if (iterator) {
-    client_register(player);
+    client_request_register(player);
     return(0);
   }
 
   return(-1);
 }
 
-int client_disconnect(struct player *player) {
+int client_request_disconnect(struct player *player) {
   ssize_t bytes_written;
   uint8_t *data;
 
@@ -146,7 +146,7 @@ int client_disconnect(struct player *player) {
   return(0);
 }
 
-int client_send_player(struct player player) {
+int client_request_player(struct player player) {
   ssize_t bytes_written;
   uint8_t *data;
 
@@ -192,7 +192,7 @@ int client_request_players(void) {
   return(0);
 }
 
-int client_send_message(struct player player, const char *message) {
+int client_request_message(struct player player, const char *message) {
   ssize_t bytes_written;
   uint8_t *data;
 

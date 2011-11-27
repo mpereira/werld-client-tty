@@ -28,7 +28,7 @@ void keyboard_event(int key) {
       }
       /* FIXME: make this asynchronous. */
       message_bar_getstr(werld_client.message_bar, message);
-      client_send_message(*(werld_client.player), message);
+      client_request_message(*(werld_client.player), message);
       free(message);
       break;
     case 'h':

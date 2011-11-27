@@ -64,7 +64,7 @@ int main(int argc, const char *argv[]) {
   free(account);
   free(password);
 
-  if (client_connect(*(werld_client.player)) == -1) {
+  if (client_request_connect(*(werld_client.player)) == -1) {
     werld_client_kill(&werld_client);
     werld_client_log(WERLD_CLIENT_INFO,
                      "%s: failed to connect to the server\n",
