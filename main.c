@@ -108,7 +108,7 @@ int main(int argc, const char *argv[]) {
   FD_SET(werld_client.fd, &master_fds);
   FD_SET(werld_client.message_handler_fds[0], &master_fds);
 
-  do {
+  for (;;) {
     read_fds = master_fds;
     timeout.tv_sec = werld_client.player_messages_lifetime;
     timeout.tv_usec = 0;
@@ -139,7 +139,7 @@ int main(int argc, const char *argv[]) {
       }
     }
     message_handler_sweep_messages();
-  } while (true);
+  }
 
   return(0);
 }
