@@ -1,4 +1,5 @@
 #include <curses.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -30,14 +31,16 @@ void werld_client_log(int level, const char *fmt, ...) {
   vsnprintf(message, sizeof(message), fmt, ap);
   va_end(ap);
 
-  log_file =
-    (werld_client.log_file == NULL) ? stderr : fopen(werld_client.log_file, "a");
+  log_file = (werld_client.log_file == NULL) ? stderr :
+                                               fopen(werld_client.log_file, "a");
 
   if (!log_file) return;
 
   strftime(time_str, sizeof(time_str), "%d %b %X", localtime(&now));
   fprintf(log_file, "%s [%s] %s", time_str, WERLD_CLIENT_LOG_LEVEL[level], message);
   fflush(log_file);
+
+  if (werld_client.log_file) fclose(log_file);
 }
 
 void werld_client_log_binary(int level,
@@ -50,8 +53,14 @@ void werld_client_log_binary(int level,
 
   if (level < werld_client.log_level) return;
 
-  log_file =
-    (werld_client.log_file == NULL) ? stderr : fopen(werld_client.log_file, "a");
+  if (werld_client.log_file == NULL) {
+    log_file = stderr;
+  } else {
+    if (!(log_file = fopen(werld_client.log_file, "a"))) {
+      perror("fopen");
+      exit(errno);
+    }
+  }
 
   if (!log_file) return;
 
@@ -68,7 +77,8 @@ void werld_client_log_binary(int level,
   fprintf(log_file, "%hd", binary[binary_size]);
   fprintf(log_file, ">>\n");
   fflush(log_file);
-  fclose(log_file);
+
+  if (werld_client.log_file) fclose(log_file);
 }
 
 void werld_client_init(struct werld_client *werld_client) {

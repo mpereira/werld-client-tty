@@ -30,6 +30,9 @@ TODO
 
 * make KEY_RESIZE not be considered input.
 
+* refactor werld_client_log_binary()'s logic to build up its string and depend
+  solely on werld_client_log().
+
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.

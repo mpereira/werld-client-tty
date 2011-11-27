@@ -4,6 +4,7 @@
 #include <curses.h>
 #include <stdarg.h>
 
+#include "map.h"
 #include "player.h"
 #include "player_list.h"
 
@@ -18,6 +19,7 @@ struct werld_client {
   int fd;
   int log_level;
   int message_handler_fds[2];
+  struct map *world_map;
   struct player *player;
   struct player_list *player_list;
 };
