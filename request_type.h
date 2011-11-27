@@ -1,11 +1,8 @@
 #ifndef WERLD_REQUEST_TYPE_H
 #define WERLD_REQUEST_TYPE_H
 
+#include <stddef.h>
 #include <stdint.h>
-#include <string.h>
-
-#include "message.h"
-#include "player.h"
 
 extern const uint8_t WERLD_REQUEST_TYPE_PLAYER;
 extern const uint8_t WERLD_REQUEST_TYPE_PLAYERS;

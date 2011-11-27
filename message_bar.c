@@ -1,7 +1,6 @@
 #include <curses.h>
 
 #include "message.h"
-#include "message_bar.h"
 
 static const int MESSAGE_BAR_LINES = 1;
 static const int MESSAGE_BAR_COLUMNS = 80;

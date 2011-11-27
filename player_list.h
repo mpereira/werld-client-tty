@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #include "player.h"
+#include "message_list.h"
 
 struct player_list {
   struct player *player;

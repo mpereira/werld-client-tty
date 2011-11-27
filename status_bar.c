@@ -1,6 +1,6 @@
 #include <curses.h>
 
-#include "status_bar.h"
+#include "player.h"
 
 static const int STATUS_BAR_LINES = 1;
 static const int STATUS_BAR_COLUMNS = 80;
