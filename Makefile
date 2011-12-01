@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS  = -O3 -Wall -Wextra -pedantic -std=c99 -g -D_GNU_SOURCE
+CFLAGS  = -Wall -Wextra -pedantic -std=c99 -D_GNU_SOURCE
 LDFLAGS = -lncurses
 
 EXECUTABLE  = werld_client
@@ -24,7 +24,9 @@ SRC_OBJECTS = \
               $(SRC_DIR)/window.o          \
 
 ifeq ($(WERLD_ENV), development)
-  CFLAGS += -DWERLD_DEVELOPMENT
+  CFLAGS += -g -DWERLD_DEVELOPMENT
+else
+  CFLAGS += -O3
 endif
 
 all: werld_client
