@@ -8,6 +8,8 @@ SRC         = $(SRC_DIR)/main.c
 SRC_OBJECTS = \
               $(SRC_DIR)/client.o          \
               $(SRC_DIR)/keyboard.o        \
+              $(SRC_DIR)/map.o             \
+              $(SRC_DIR)/maps.o            \
               $(SRC_DIR)/message.o         \
               $(SRC_DIR)/message_bar.o     \
               $(SRC_DIR)/message_handler.o \

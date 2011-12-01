@@ -7,6 +7,7 @@
 
 #include "client.h"
 #include "keyboard.h"
+#include "maps.h"
 #include "message_bar.h"
 #include "message_handler.h"
 #include "player.h"
@@ -66,7 +67,7 @@ int main(int argc, const char *argv[]) {
 
   if (client_request_connect(*(werld_client.player)) == -1) {
     werld_client_kill(&werld_client);
-    werld_client_log(WERLD_CLIENT_INFO,
+    werld_client_log(WERLD_CLIENT_ERROR,
                      "%s: failed to connect to the server\n",
                      argv[0]);
     return(-1);
@@ -74,8 +75,24 @@ int main(int argc, const char *argv[]) {
 
   if (client_handle_response() == -1) {
     werld_client_kill(&werld_client);
-    werld_client_log(WERLD_CLIENT_INFO,
+    werld_client_log(WERLD_CLIENT_ERROR,
                      "%s: connection to the server has been lost\n",
+                     argv[0]);
+    return(-1);
+  }
+
+  if (client_request_map(WERLD_MAPS_WORLD) == -1) {
+    werld_client_kill(&werld_client);
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "%s: failed to connect to the server\n",
+                     argv[0]);
+    return(-1);
+  }
+
+  if (client_handle_response() == -1) {
+    werld_client_kill(&werld_client);
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "%s: failed to download world map\n",
                      argv[0]);
     return(-1);
   }

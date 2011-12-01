@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include "client.h"
+#include "maps.h"
 #include "message_handler.h"
 #include "net.h"
 #include "player.h"
@@ -23,12 +24,13 @@ static const char *WERLD_SERVER_ADDRESS = "server.werldonline.com";
 #endif
 static const char *WERLD_SERVER_PORT = "9876";
 
-enum { WERLD_RESPONSE_TYPE_ERROR = -1,
-       WERLD_RESPONSE_TYPE_REGISTER,
-       WERLD_RESPONSE_TYPE_PLAYERS,
-       WERLD_RESPONSE_TYPE_MESSAGE };
+const uint8_t WERLD_RESPONSE_TYPE_ERROR    = -1;
+const uint8_t WERLD_RESPONSE_TYPE_REGISTER = 0;
+const uint8_t WERLD_RESPONSE_TYPE_PLAYERS  = 1;
+const uint8_t WERLD_RESPONSE_TYPE_MESSAGE  = 2;
+const uint8_t WERLD_RESPONSE_TYPE_MAP      = 3;
 
-static const size_t WERLD_RESPONSE_TYPE_BUFSIZ = 4;
+static const size_t WERLD_RESPONSE_TYPE_BUFSIZ = sizeof(uint8_t);
 
 #define WERLD_RESPONSE_REGISTER_BUFSIZ sizeof(struct player)
 #define WERLD_RESPONSE_MESSAGE_BUFSIZ(message_length) (sizeof(struct player) + \
@@ -161,14 +163,14 @@ int client_request_player(struct player player) {
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
                                  WERLD_REQUEST_TYPE_PLAYER_BUFSIZ)) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+send_player write failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR, "+client+request+player write failed\n");
     exit(-1);
   }
 
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           data,
                           WERLD_REQUEST_TYPE_PLAYER_BUFSIZ,
-                          "+client+send_player bytes written: %zd ",
+                          "+client+request+player bytes written: %zd ",
                           bytes_written);
   free(data);
 
@@ -210,14 +212,47 @@ int client_request_message(struct player player, const char *message) {
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
                                  WERLD_REQUEST_TYPE_MESSAGE_BUFSIZ(message))) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+send_message write failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR, "+client+request+message write failed\n");
     exit(-1);
   }
 
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           data,
                           WERLD_REQUEST_TYPE_MESSAGE_BUFSIZ(message),
-                          "+client+send_message bytes written: %zd ",
+                          "+client+request+message bytes written: %zd ",
+                          bytes_written);
+  free(data);
+
+  return(0);
+}
+
+int client_request_map(uint8_t map) {
+  ssize_t bytes_written;
+  uint8_t *data;
+
+  if (map != WERLD_MAPS_WORLD) return(-1);
+
+  if (!(data = malloc(WERLD_REQUEST_TYPE_MAP_PACKET_SIZE))) {
+    perror("malloc");
+    return(-1);
+  }
+
+  memcpy(data, &WERLD_REQUEST_TYPE_MAP, WERLD_REQUEST_TYPE_BUFSIZ);
+  memcpy(data + WERLD_REQUEST_TYPE_BUFSIZ,
+         &WERLD_MAPS_WORLD,
+         WERLD_MAPS_HEADER_FIELD_SIZE);
+
+  if ((bytes_written = net_write(werld_client.fd,
+                                 data,
+                                 WERLD_REQUEST_TYPE_MAP_PACKET_SIZE)) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR, "+client+request+map write failed\n");
+    return(-1);
+  }
+
+  werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                          data,
+                          WERLD_REQUEST_TYPE_MAP_PACKET_SIZE,
+                          "+client+request+map bytes written: %zd ",
                           bytes_written);
   free(data);
 
@@ -367,9 +402,83 @@ static int client_handle_response_players(void) {
   return(0);
 }
 
+static int client_handle_response_map(void) {
+  size_t tiles_size;
+  ssize_t bytes_read;
+  struct map **map;
+  uint32_t dimensions[2];
+  uint8_t *payload;
+  uint8_t _map;
+
+  if ((bytes_read = net_read(werld_client.fd,
+                             &_map,
+                             sizeof(uint8_t))) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+map read failed\n");
+    return(-1);
+  }
+
+  if (bytes_read == 0) return(-1);
+
+  werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                          &_map,
+                          sizeof(uint8_t),
+                          "+client+handle_response+map bytes read: %zd ",
+                          bytes_read);
+
+  if (_map == WERLD_MAPS_WORLD) {
+    map = &(werld_client.world_map);
+  } else {
+    return(-1);
+  }
+
+  if ((bytes_read = net_read(werld_client.fd,
+                             &dimensions,
+                             2 * sizeof(uint32_t))) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+map read failed\n");
+    exit(-1);
+  }
+
+  if (bytes_read == 0) return(-1);
+
+  werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                          (uint8_t *) &dimensions,
+                          2 * sizeof(uint32_t),
+                          "+client+handle_response+map bytes read: %zd ",
+                          bytes_read);
+
+  tiles_size = WERLD_MAP_TILES_SIZE(dimensions[0], dimensions[1]);
+
+  if (!(payload = malloc(tiles_size))) {
+    perror("malloc");
+    exit(errno);
+  }
+
+  if ((bytes_read = net_read(werld_client.fd, payload, tiles_size)) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+map read failed\n");
+    exit(-1);
+  }
+
+  if (bytes_read == 0) return(-1);
+
+  werld_client_log_binary(WERLD_CLIENT_DEBUG,
+                          payload,
+                          tiles_size,
+                          "+client+handle_response+map bytes read: %zd ",
+                          bytes_read);
+
+  map_malloc(map, dimensions[0], dimensions[1]);
+  (*map)->width = dimensions[0];
+  (*map)->height = dimensions[1];
+  for (int i = 0; (uint32_t) i < (*map)->width; i++) {
+    memcpy((*map)->tiles[i], payload + (*map)->height * i, (*map)->height);
+  }
+
+  return(0);
+}
+
 int client_handle_response(void) {
   ssize_t bytes_read;
-  uint32_t response_type;
+  uint8_t response_type;
 
   if ((bytes_read = net_read(werld_client.fd,
                              &response_type,
@@ -382,7 +491,7 @@ int client_handle_response(void) {
 
   werld_client_log_binary(WERLD_CLIENT_DEBUG,
                           (uint8_t *) &response_type,
-                          sizeof(uint32_t),
+                          sizeof(uint8_t),
                           "+client+handle_response bytes read: %zd ",
                           bytes_read);
 
@@ -392,6 +501,8 @@ int client_handle_response(void) {
     return(client_handle_response_message());
   } else if (response_type == WERLD_RESPONSE_TYPE_PLAYERS) {
     return(client_handle_response_players());
+  } else if (response_type == WERLD_RESPONSE_TYPE_MAP) {
+    return(client_handle_response_map());
   }
 
   return(0);
