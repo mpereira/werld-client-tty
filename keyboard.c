@@ -9,7 +9,6 @@
 #include "movement.h"
 #include "player.h"
 #include "tty.h"
-#include "ui.h"
 #include "werld_client.h"
 
 void keyboard_event(int key) {
@@ -39,11 +38,9 @@ void keyboard_event(int key) {
     case KEY_DOWN:
     case KEY_UP:
     case KEY_RIGHT:
-      ui_erase_player_message_list(werld_client.player);
-      ui_draw_map(werld_client.world_map);
-      player_move(werld_client.player, movement_direction(key));
-      ui_draw_player_message_list(werld_client.player);
-      main_window_refresh(werld_client.main_window);
+      if (player_move(werld_client.player, movement_direction(key)) != -1) {
+        client_request_player(*(werld_client.player));
+      }
       break;
     case KEY_RESIZE:
       tty_handle_resize();

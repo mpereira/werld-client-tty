@@ -486,7 +486,9 @@ static int client_handle_response_map(void) {
   (*map)->width = dimensions[0];
   (*map)->height = dimensions[1];
   for (int i = 0; (uint32_t) i < (*map)->width; i++) {
-    memcpy((*map)->tiles[i], payload + (*map)->height * i, (*map)->height);
+    memcpy((*map)->tiles[i],
+           payload + (*map)->height * sizeof(**((*map)->tiles)) * i,
+           (*map)->height * sizeof(**((*map)->tiles)));
   }
 
   return(0);

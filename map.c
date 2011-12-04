@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "map.h"
+#include "tile.h"
 
 size_t WERLD_MAP_TILES_SIZE(int width, int height) {
   return(sizeof(struct tile) * width * height);
