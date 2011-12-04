@@ -5,13 +5,16 @@
 #include "message_list.h"
 #include "player.h"
 #include "player_list.h"
+#include "ui.h"
 #include "werld_client.h"
 
 void ui_draw_player(struct player player) {
   wmove(werld_client.window, player.y - 1, (player.x - strlen(player.name) / 2) -1);
-  waddch(werld_client.window, '(');
+  waddch(werld_client.window, '(' | COLOR_PAIR(BLACK_ON_BLACK) | A_BOLD);
+  wattron(werld_client.window,  COLOR_PAIR(CYAN_ON_BLACK) | A_DIM);
   waddstr(werld_client.window, player.name);
-  waddch(werld_client.window, ')');
+  wattroff(werld_client.window,  COLOR_PAIR(CYAN_ON_BLACK) | A_DIM);
+  waddch(werld_client.window, ')' | COLOR_PAIR(BLACK_ON_BLACK) | A_BOLD);
   mvwaddch(werld_client.window, player.y, player.x, '@');
 }
 
@@ -94,9 +97,9 @@ void ui_draw_map(const struct map *map) {
   for (unsigned int i = 0; i < map->width; i++) {
     for (unsigned int j = 0; j < map->height; j++) {
       if (map->tiles[i][j] == WERLD_MAP_TILE_TYPE_GROUND) {
-        mvwaddch(werld_client.window, j, i, '.');
+        mvwaddch(werld_client.window, j, i, '.' | WERLD_MAP_TILE_TYPE_GROUND_COLOR);
       } else if (map->tiles[i][j] == WERLD_MAP_TILE_TYPE_WALL) {
-        mvwaddch(werld_client.window, j, i, '#');
+        mvwaddch(werld_client.window, j, i, '#' | WERLD_MAP_TILE_TYPE_WALL_COLOR);
       }
     }
   }
