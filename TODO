@@ -17,8 +17,6 @@ TODO
 
 * fix broken messages once and for all.
 
-* don't allow players to walk across screen boundaries.
-
 * work with wide characters.
 
 * generate data shared between projects (e.g. response types) programatically
@@ -43,3 +41,4 @@ DONE
 * create status bar.
 * iterate on read()s and write()s and make sure all data is transmitted.
 * using the new 'net' module breaks messages. discover why.
+* don't allow players to walk across screen boundaries.
