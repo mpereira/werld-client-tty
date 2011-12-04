@@ -40,6 +40,7 @@ void keyboard_event(int key) {
     case KEY_UP:
     case KEY_RIGHT:
       ui_erase_player_message_list(werld_client.player);
+      ui_draw_map(werld_client.world_map);
       player_move(werld_client.player, movement_direction(key));
       ui_draw_player_message_list(werld_client.player);
       window_refresh(werld_client.window);

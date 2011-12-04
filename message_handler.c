@@ -65,8 +65,10 @@ int message_handler_handle_player_message(void) {
   message[message_size] = '\0';
 
   ui_erase_player_message_list(&player);
+  ui_draw_map(werld_client.world_map);
   player_list_add_message(&(werld_client.player_list), message, player.id);
   ui_draw_player_message_list(&player);
+  ui_draw_player(player);
   window_refresh(werld_client.window);
   free(message);
   free(data);
@@ -122,6 +124,7 @@ void message_handler_sweep_messages(void) {
                          "+message_handler_sweep_messages sweeping %s\n",
                          j->message);
         ui_erase_player_message_list(i->player);
+        ui_draw_map(werld_client.world_map);
         message_list_remove(&(i->message_list), j->message);
         ui_draw_player_list(werld_client.player_list);
         ui_draw_player_message_list(i->player);

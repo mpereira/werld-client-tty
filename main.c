@@ -14,6 +14,7 @@
 #include "player_list.h"
 #include "status_bar.h"
 #include "tty.h"
+#include "ui.h"
 #include "werld_client.h"
 #include "window.h"
 
@@ -117,6 +118,8 @@ int main(int argc, const char *argv[]) {
     wbkgd(werld_client.status_bar, COLOR_PAIR(1));
   }
   status_bar_refresh(werld_client.status_bar, werld_client.player);
+  ui_draw_map(werld_client.world_map);
+  window_refresh(werld_client.window);
 
   fd_set master_fds, read_fds;
 

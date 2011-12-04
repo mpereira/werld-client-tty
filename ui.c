@@ -1,6 +1,7 @@
 #include <curses.h>
 #include <string.h>
 
+#include "map.h"
 #include "message_list.h"
 #include "player.h"
 #include "player_list.h"
@@ -86,5 +87,17 @@ void ui_erase_player_message_list(const struct player *player) {
       waddch(werld_client.window, ' ');
     }
     y--;
+  }
+}
+
+void ui_draw_map(const struct map *map) {
+  for (unsigned int i = 0; i < map->width; i++) {
+    for (unsigned int j = 0; j < map->height; j++) {
+      if (map->tiles[i][j] == WERLD_MAP_TILE_TYPE_GROUND) {
+        mvwaddch(werld_client.window, j, i, '.');
+      } else if (map->tiles[i][j] == WERLD_MAP_TILE_TYPE_WALL) {
+        mvwaddch(werld_client.window, j, i, '#');
+      }
+    }
   }
 }

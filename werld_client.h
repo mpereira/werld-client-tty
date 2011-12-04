@@ -14,6 +14,7 @@ struct werld_client {
   WINDOW *message_bar;
   WINDOW *status_bar;
   WINDOW *window;
+  WINDOW *world_map_window;
   char *log_file;
   double player_messages_lifetime;
   int fd;

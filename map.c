@@ -5,6 +5,9 @@
 
 #include "map.h"
 
+uint8_t WERLD_MAP_TILE_TYPE_GROUND = 0;
+uint8_t WERLD_MAP_TILE_TYPE_WALL   = 1;
+
 size_t WERLD_MAP_TILES_SIZE(int width, int height) {
   return(sizeof(uint8_t) * width * height);
 }
