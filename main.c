@@ -7,16 +7,16 @@
 
 #include "client.h"
 #include "keyboard.h"
+#include "main_window.h"
 #include "maps.h"
-#include "message_bar.h"
+#include "message_bar_window.h"
 #include "message_handler.h"
 #include "player.h"
 #include "player_list.h"
-#include "status_bar.h"
+#include "status_bar_window.h"
 #include "tty.h"
 #include "ui.h"
 #include "werld_client.h"
-#include "window.h"
 
 int main(int argc, const char *argv[]) {
   char *account;
@@ -56,9 +56,9 @@ int main(int argc, const char *argv[]) {
     refresh();
   }
 
-  window_new(&(werld_client.window));
-  window_init(werld_client.window);
-  window_get_credentials(werld_client.window, account, password);
+  main_window_new(&(werld_client.main_window));
+  main_window_init(werld_client.main_window);
+  main_window_get_credentials(werld_client.main_window, account, password);
 
   player_malloc(&(werld_client.player));
   player_set(werld_client.player, 0, account, 0, 0);
@@ -108,9 +108,9 @@ int main(int argc, const char *argv[]) {
   werld_client.player_list->message_list = NULL;
   werld_client.player_list->next = NULL;
 
-  message_bar_new(&(werld_client.message_bar));
-  message_bar_init(werld_client.message_bar);
-  status_bar_new(&(werld_client.status_bar));
+  message_bar_window_new(&(werld_client.message_bar_window));
+  message_bar_window_init(werld_client.message_bar_window);
+  status_bar_window_new(&(werld_client.status_bar_window));
 
   if (has_colors()) {
     start_color();
@@ -123,9 +123,9 @@ int main(int argc, const char *argv[]) {
     init_pair(CYAN_ON_BLACK, COLOR_CYAN, COLOR_BLACK);
     init_pair(WHITE_ON_BLACK, COLOR_WHITE, COLOR_BLACK);
   }
-  status_bar_refresh(werld_client.status_bar, werld_client.player);
+  status_bar_window_refresh(werld_client.status_bar_window, werld_client.player);
   ui_draw_map(werld_client.world_map);
-  window_refresh(werld_client.window);
+  main_window_refresh(werld_client.main_window);
 
   fd_set master_fds, read_fds;
 
@@ -148,7 +148,7 @@ int main(int argc, const char *argv[]) {
       continue;
     }
     if (FD_ISSET(fileno(stdin), &read_fds)) {
-      keyboard_event(wgetch(werld_client.window));
+      keyboard_event(wgetch(werld_client.main_window));
     }
     if (FD_ISSET(werld_client.message_handler_fds[0], &read_fds)) {
       if (message_handler_handle_player_message() == -1) {

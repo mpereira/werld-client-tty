@@ -7,11 +7,11 @@
 #include <time.h>
 
 #include "client.h"
-#include "message_bar.h"
+#include "main_window.h"
+#include "message_bar_window.h"
 #include "message_handler.h"
-#include "status_bar.h"
+#include "status_bar_window.h"
 #include "werld_client.h"
-#include "window.h"
 
 static const size_t WERLD_LOG_MESSAGE_BUFSIZ = 1024;
 static const char *WERLD_CLIENT_LOG_LEVEL[] = { "debug", "error", "info" };
@@ -82,9 +82,9 @@ void werld_client_log_binary(int level,
 }
 
 void werld_client_init(struct werld_client *werld_client) {
-  werld_client->message_bar = NULL;
-  werld_client->status_bar = NULL;
-  werld_client->window = NULL;
+  werld_client->message_bar_window = NULL;
+  werld_client->status_bar_window = NULL;
+  werld_client->main_window = NULL;
 
   werld_client->log_file = NULL;
 
@@ -101,9 +101,9 @@ void werld_client_init(struct werld_client *werld_client) {
 }
 
 void werld_client_kill(struct werld_client *werld_client) {
-  if (werld_client->message_bar) message_bar_del(werld_client->message_bar);
-  if (werld_client->status_bar) status_bar_del(werld_client->status_bar);
-  if (werld_client->window) window_del(werld_client->window);
+  if (werld_client->message_bar_window) message_bar_window_del(werld_client->message_bar_window);
+  if (werld_client->status_bar_window) status_bar_window_del(werld_client->status_bar_window);
+  if (werld_client->main_window) main_window_del(werld_client->main_window);
 
   if (werld_client->log_file) free(werld_client->log_file);
 

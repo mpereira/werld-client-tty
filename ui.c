@@ -9,22 +9,22 @@
 #include "werld_client.h"
 
 void ui_draw_player(struct player player) {
-  wmove(werld_client.window, player.y - 1, (player.x - strlen(player.name) / 2) -1);
-  waddch(werld_client.window, '(' | COLOR_PAIR(BLACK_ON_BLACK) | A_BOLD);
-  wattron(werld_client.window,  COLOR_PAIR(CYAN_ON_BLACK) | A_DIM);
-  waddstr(werld_client.window, player.name);
-  wattroff(werld_client.window,  COLOR_PAIR(CYAN_ON_BLACK) | A_DIM);
-  waddch(werld_client.window, ')' | COLOR_PAIR(BLACK_ON_BLACK) | A_BOLD);
-  mvwaddch(werld_client.window, player.y, player.x, '@');
+  wmove(werld_client.main_window, player.y - 1, (player.x - strlen(player.name) / 2) -1);
+  waddch(werld_client.main_window, '(' | COLOR_PAIR(BLACK_ON_BLACK) | A_BOLD);
+  wattron(werld_client.main_window,  COLOR_PAIR(CYAN_ON_BLACK) | A_DIM);
+  waddstr(werld_client.main_window, player.name);
+  wattroff(werld_client.main_window,  COLOR_PAIR(CYAN_ON_BLACK) | A_DIM);
+  waddch(werld_client.main_window, ')' | COLOR_PAIR(BLACK_ON_BLACK) | A_BOLD);
+  mvwaddch(werld_client.main_window, player.y, player.x, '@');
 }
 
 void ui_erase_player(struct player player) {
-  wmove(werld_client.window, player.y - 1, (player.x - strlen(player.name) / 2) -1);
+  wmove(werld_client.main_window, player.y - 1, (player.x - strlen(player.name) / 2) -1);
   for (unsigned int i = 0; i < strlen(player.name) + 2; i++) {
-    waddch(werld_client.window, ' ');
+    waddch(werld_client.main_window, ' ');
   }
-  wmove(werld_client.window, player.y, player.x);
-  waddch(werld_client.window, ' ');
+  wmove(werld_client.main_window, player.y, player.x);
+  waddch(werld_client.main_window, ' ');
 }
 
 void ui_draw_player_list(const struct player_list *player_list) {
@@ -58,7 +58,7 @@ void ui_draw_player_message_list(const struct player *player) {
   x = player->x;
 
   for (; message_list; message_list = message_list->next) {
-    mvwaddstr(werld_client.window,
+    mvwaddstr(werld_client.main_window,
               y - 3,
               x - strlen(message_list->message) / 2,
               message_list->message);
@@ -85,9 +85,9 @@ void ui_erase_player_message_list(const struct player *player) {
   x = player->x;
 
   for (; message_list; message_list = message_list->next) {
-    wmove(werld_client.window, y - 3, x - strlen(message_list->message) / 2);
+    wmove(werld_client.main_window, y - 3, x - strlen(message_list->message) / 2);
     for (size_t i = 0; i < strlen(message_list->message); i++) {
-      waddch(werld_client.window, ' ');
+      waddch(werld_client.main_window, ' ');
     }
     y--;
   }
@@ -97,9 +97,9 @@ void ui_draw_map(const struct map *map) {
   for (unsigned int i = 0; i < map->width; i++) {
     for (unsigned int j = 0; j < map->height; j++) {
       if (map->tiles[i][j] == WERLD_MAP_TILE_TYPE_GROUND) {
-        mvwaddch(werld_client.window, j, i, '.' | WERLD_MAP_TILE_TYPE_GROUND_COLOR);
+        mvwaddch(werld_client.main_window, j, i, '.' | WERLD_MAP_TILE_TYPE_GROUND_COLOR);
       } else if (map->tiles[i][j] == WERLD_MAP_TILE_TYPE_WALL) {
-        mvwaddch(werld_client.window, j, i, '#' | WERLD_MAP_TILE_TYPE_WALL_COLOR);
+        mvwaddch(werld_client.main_window, j, i, '#' | WERLD_MAP_TILE_TYPE_WALL_COLOR);
       }
     }
   }

@@ -3,14 +3,14 @@
 #include <stdlib.h>
 
 #include "client.h"
+#include "main_window.h"
 #include "message.h"
-#include "message_bar.h"
+#include "message_bar_window.h"
 #include "movement.h"
 #include "player.h"
 #include "tty.h"
 #include "ui.h"
 #include "werld_client.h"
-#include "window.h"
 
 void keyboard_event(int key) {
   char *message;
@@ -27,7 +27,7 @@ void keyboard_event(int key) {
         exit(errno);
       }
       /* FIXME: make this asynchronous. */
-      message_bar_getstr(werld_client.message_bar, message);
+      message_bar_window_getstr(werld_client.message_bar_window, message);
       client_request_message(*(werld_client.player), message);
       free(message);
       break;
@@ -43,7 +43,7 @@ void keyboard_event(int key) {
       ui_draw_map(werld_client.world_map);
       player_move(werld_client.player, movement_direction(key));
       ui_draw_player_message_list(werld_client.player);
-      window_refresh(werld_client.window);
+      main_window_refresh(werld_client.main_window);
       break;
     case KEY_RESIZE:
       tty_handle_resize();

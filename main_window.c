@@ -1,9 +1,9 @@
 #include <curses.h>
 
-static const int WINDOW_LINES = 22;
-static const int WINDOW_COLUMNS = 80;
-static const int WINDOW_STARTING_Y = 0;
-static const int WINDOW_STARTING_X = 0;
+static const int MAIN_WINDOW_LINES = 22;
+static const int MAIN_WINDOW_COLUMNS = 80;
+static const int MAIN_WINDOW_STARTING_Y = 0;
+static const int MAIN_WINDOW_STARTING_X = 0;
 static const int WERLD_ACCOUNT_INPUT_Y = 18;
 static const int WERLD_ACCOUNT_INPUT_X = 53;
 static const int WERLD_PASSWORD_INPUT_Y = 19;
@@ -12,7 +12,7 @@ static const int WERLD_PASSWORD_INPUT_X = 53;
 const int WERLD_ACCOUNT_MAX_SIZE = 20;
 const int WERLD_PASSWORD_MAX_SIZE = 20;
 
-static const char *WERLD_LOGIN =
+static const char *WERLD_LOGIN_SCREEN =
   "                                  /   \\\n"
   " _                        )      ((   ))     (\n"
   "(@)                      /|\\      ))_((     /|\\\n"
@@ -35,42 +35,42 @@ static const char *WERLD_LOGIN =
   "                                         | password: ____________________ |\n"
   "                                         +--------------------------------+\n";
 
-void window_new(WINDOW **window) {
-  *window = newwin(WINDOW_LINES,
-                   WINDOW_COLUMNS,
-                   WINDOW_STARTING_Y,
-                   WINDOW_STARTING_X);
+void main_window_new(WINDOW **main_window) {
+  *main_window = newwin(MAIN_WINDOW_LINES,
+                        MAIN_WINDOW_COLUMNS,
+                        MAIN_WINDOW_STARTING_Y,
+                        MAIN_WINDOW_STARTING_X);
 }
 
-void window_init(WINDOW *window) {
-  keypad(window, true);
+void main_window_init(WINDOW *main_window) {
+  keypad(main_window, true);
 }
 
-void window_del(WINDOW *window) {
-  delwin(window);
+void main_window_del(WINDOW *main_window) {
+  delwin(main_window);
 }
 
-void window_refresh(WINDOW *window) {
-  wrefresh(window);
+void main_window_refresh(WINDOW *main_window) {
+  wrefresh(main_window);
 }
 
 /* FIXME: make this resistant to terminal resizing. */
-void window_get_credentials(WINDOW *window, char *account, char *password) {
-  waddstr(window, WERLD_LOGIN);
+void main_window_get_credentials(WINDOW *main_window, char *account, char *password) {
+  waddstr(main_window, WERLD_LOGIN_SCREEN);
   echo();
   curs_set(true);
-  mvwgetnstr(window,
+  mvwgetnstr(main_window,
              WERLD_ACCOUNT_INPUT_Y,
              WERLD_ACCOUNT_INPUT_X,
              account,
              WERLD_ACCOUNT_MAX_SIZE);
-  mvwgetnstr(window,
+  mvwgetnstr(main_window,
              WERLD_PASSWORD_INPUT_Y,
              WERLD_PASSWORD_INPUT_X,
              password,
              WERLD_PASSWORD_MAX_SIZE);
   curs_set(false);
   noecho();
-  werase(window);
-  wrefresh(window);
+  werase(main_window);
+  wrefresh(main_window);
 }

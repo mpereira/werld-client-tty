@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include "client.h"
+#include "main_window.h"
 #include "maps.h"
 #include "message_handler.h"
 #include "net.h"
@@ -16,7 +17,6 @@
 #include "request_type.h"
 #include "ui.h"
 #include "werld_client.h"
-#include "window.h"
 
 #ifdef WERLD_DEVELOPMENT
 static const char *WERLD_SERVER_ADDRESS = "0.0.0.0";
@@ -289,7 +289,7 @@ static int client_handle_response_register(void) {
   free(data);
   memcpy(werld_client.player, &player, sizeof(struct player));
   ui_draw_player(*(werld_client.player));
-  window_refresh(werld_client.window);
+  main_window_refresh(werld_client.main_window);
 
   return(0);
 }
@@ -398,7 +398,7 @@ static int client_handle_response_players(void) {
                      (void *) payload,
                      number_of_players);
   ui_draw_player_list(werld_client.player_list);
-  window_refresh(werld_client.window);
+  main_window_refresh(werld_client.main_window);
   free(payload);
 
   return(0);

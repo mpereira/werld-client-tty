@@ -5,11 +5,11 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "main_window.h"
 #include "message_list.h"
 #include "net.h"
 #include "ui.h"
 #include "werld_client.h"
-#include "window.h"
 
 #define WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message_size) \
   (sizeof(size_t) + sizeof(struct player) + message_size)
@@ -69,7 +69,7 @@ int message_handler_handle_player_message(void) {
   player_list_add_message(&(werld_client.player_list), message, player.id);
   ui_draw_player_message_list(&player);
   ui_draw_player(player);
-  window_refresh(werld_client.window);
+  main_window_refresh(werld_client.main_window);
   free(message);
   free(data);
 
@@ -128,7 +128,7 @@ void message_handler_sweep_messages(void) {
         message_list_remove(&(i->message_list), j->message);
         ui_draw_player_list(werld_client.player_list);
         ui_draw_player_message_list(i->player);
-        wrefresh(werld_client.window);
+        main_window_refresh(werld_client.main_window);
       }
     }
   }

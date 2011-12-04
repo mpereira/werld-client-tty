@@ -3,23 +3,23 @@
 #include "player.h"
 #include "ui.h"
 
-static const int STATUS_BAR_LINES = 1;
-static const int STATUS_BAR_COLUMNS = 80;
-static const int STATUS_BAR_STARTING_Y = 23;
-static const int STATUS_BAR_STARTING_X = 0;
+static const int STATUS_BAR_WINDOW_LINES = 1;
+static const int STATUS_BAR_WINDOW_COLUMNS = 80;
+static const int STATUS_BAR_WINDOW_STARTING_Y = 23;
+static const int STATUS_BAR_WINDOW_STARTING_X = 0;
 
-void status_bar_new(WINDOW **status_bar_window) {
-  *status_bar_window = newwin(STATUS_BAR_LINES,
-                              STATUS_BAR_COLUMNS,
-                              STATUS_BAR_STARTING_Y,
-                              STATUS_BAR_STARTING_X);
+void status_bar_window_new(WINDOW **status_bar_window) {
+  *status_bar_window = newwin(STATUS_BAR_WINDOW_LINES,
+                              STATUS_BAR_WINDOW_COLUMNS,
+                              STATUS_BAR_WINDOW_STARTING_Y,
+                              STATUS_BAR_WINDOW_STARTING_X);
 }
 
-void status_bar_del(WINDOW *status_bar_window) {
+void status_bar_window_del(WINDOW *status_bar_window) {
   delwin(status_bar_window);
 }
 
-void status_bar_refresh(WINDOW *status_bar_window, struct player *player) {
+void status_bar_window_refresh(WINDOW *status_bar_window, struct player *player) {
   werase(status_bar_window);
 
   waddstr(status_bar_window, player->name);
