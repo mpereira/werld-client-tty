@@ -107,7 +107,7 @@ void werld_client_kill(struct werld_client *werld_client) {
 
   if (werld_client->log_file) free(werld_client->log_file);
 
-  if (werld_client->fd != -1) client_request_disconnect(werld_client->player);
+  if (werld_client->fd != -1) client_disconnect();
 
   for (int i = 0; i < 2; i++)
     if (werld_client->message_handler_fds[i] != -1)

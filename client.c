@@ -114,37 +114,13 @@ int client_request_connect(struct player player) {
   return(-1);
 }
 
-int client_request_disconnect(struct player *player) {
-  ssize_t bytes_written;
-  uint8_t *data;
-
-  if (!(data = malloc(WERLD_REQUEST_TYPE_UNREGISTER_BUFSIZ))) {
-    perror("malloc");
-    exit(errno);
-  }
-
-  memcpy(data, &WERLD_REQUEST_TYPE_UNREGISTER, WERLD_REQUEST_TYPE_BUFSIZ);
-  memcpy(data + WERLD_REQUEST_TYPE_BUFSIZ, player, sizeof(struct player));
-
-  if ((bytes_written = net_write(werld_client.fd,
-                                 data,
-                                 WERLD_REQUEST_TYPE_UNREGISTER_BUFSIZ)) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+disconnect write failed\n");
-    exit(-1);
-  }
-
-  werld_client_log_binary(WERLD_CLIENT_DEBUG,
-                          data,
-                          WERLD_REQUEST_TYPE_UNREGISTER_BUFSIZ,
-                          "+client+disconnect bytes written: %zd ",
-                          bytes_written);
-
-  free(data);
-
+int client_disconnect(void) {
   if (close(werld_client.fd)) {
     perror("close");
     exit(errno);
   }
+
+  werld_client_log(WERLD_CLIENT_DEBUG, "+client+disconnect\n");
 
   return(0);
 }
