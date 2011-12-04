@@ -123,7 +123,8 @@ int main(int argc, const char *argv[]) {
     init_pair(CYAN_ON_BLACK, COLOR_CYAN, COLOR_BLACK);
     init_pair(WHITE_ON_BLACK, COLOR_WHITE, COLOR_BLACK);
   }
-  status_bar_window_refresh(werld_client.status_bar_window, werld_client.player);
+  status_bar_window_refresh(werld_client.status_bar_window,
+                            werld_client.player);
   ui_draw_map(werld_client.world_map);
   main_window_refresh(werld_client.main_window);
 

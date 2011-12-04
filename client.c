@@ -164,7 +164,8 @@ int client_request_player(struct player player) {
   if ((bytes_written = net_write(werld_client.fd,
                                  data,
                                  WERLD_REQUEST_TYPE_PLAYER_BUFSIZ)) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+request+player write failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+request+player write failed\n");
     exit(-1);
   }
 
@@ -184,7 +185,8 @@ int client_request_players(void) {
   if ((bytes_written = net_write(werld_client.fd,
                                  &WERLD_REQUEST_TYPE_PLAYERS,
                                  WERLD_REQUEST_TYPE_BUFSIZ)) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+request_players write failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+request_players write failed\n");
     exit(-1);
   }
 
@@ -210,10 +212,12 @@ int client_request_message(struct player player, const char *message) {
   offset = memcpy(offset + WERLD_REQUEST_TYPE_BUFSIZ, &player, sizeof(player));
   memcpy(offset + sizeof(player), message, strlen(message));
 
-  if ((bytes_written = net_write(werld_client.fd,
-                                 data,
-                                 WERLD_REQUEST_TYPE_MESSAGE_BUFSIZ(message))) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+request+message write failed\n");
+  if ((bytes_written =
+         net_write(werld_client.fd,
+                   data,
+                   WERLD_REQUEST_TYPE_MESSAGE_BUFSIZ(message))) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+request+message write failed\n");
     exit(-1);
   }
 
@@ -273,7 +277,8 @@ static int client_handle_response_register(void) {
   if ((bytes_read = net_read(werld_client.fd,
                              data,
                              WERLD_RESPONSE_REGISTER_BUFSIZ)) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+register read failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+handle_response+register read failed\n");
     exit(-1);
   }
 
@@ -304,7 +309,8 @@ static int client_handle_response_message(void) {
   if ((bytes_read = net_read(werld_client.fd,
                              &message_length,
                              sizeof(uint32_t))) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+message read failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+handle_response+message read failed\n");
     exit(-1);
   }
 
@@ -326,10 +332,12 @@ static int client_handle_response_message(void) {
     exit(errno);
   }
 
-  if ((bytes_read = net_read(werld_client.fd,
-                             payload,
-                             WERLD_RESPONSE_MESSAGE_BUFSIZ(message_length))) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+message read failed\n");
+  if ((bytes_read =
+         net_read(werld_client.fd,
+                  payload,
+                  WERLD_RESPONSE_MESSAGE_BUFSIZ(message_length))) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+handle_response+message read failed\n");
     exit(-1);
   }
 
@@ -360,7 +368,8 @@ static int client_handle_response_players(void) {
   if ((bytes_read = net_read(werld_client.fd,
                              &number_of_players,
                              sizeof(uint32_t))) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+players read failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+handle_response+players read failed\n");
     exit(-1);
   }
 
@@ -377,10 +386,12 @@ static int client_handle_response_players(void) {
     exit(errno);
   }
 
-  if ((bytes_read = net_read(werld_client.fd,
-                             payload,
-                             WERLD_RESPONSE_PLAYERS_BUFSIZ(number_of_players))) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+players read failed\n");
+  if ((bytes_read =
+         net_read(werld_client.fd,
+                  payload,
+                  WERLD_RESPONSE_PLAYERS_BUFSIZ(number_of_players))) == -1) {
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+handle_response+players read failed\n");
     exit(-1);
   }
 
@@ -415,7 +426,8 @@ static int client_handle_response_map(void) {
   if ((bytes_read = net_read(werld_client.fd,
                              &_map,
                              sizeof(uint8_t))) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+map read failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+handle_response+map read failed\n");
     return(-1);
   }
 
@@ -436,7 +448,8 @@ static int client_handle_response_map(void) {
   if ((bytes_read = net_read(werld_client.fd,
                              &dimensions,
                              2 * sizeof(uint32_t))) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+map read failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+handle_response+map read failed\n");
     exit(-1);
   }
 
@@ -456,7 +469,8 @@ static int client_handle_response_map(void) {
   }
 
   if ((bytes_read = net_read(werld_client.fd, payload, tiles_size)) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response+map read failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+handle_response+map read failed\n");
     exit(-1);
   }
 
@@ -485,7 +499,8 @@ int client_handle_response(void) {
   if ((bytes_read = net_read(werld_client.fd,
                              &response_type,
                              WERLD_RESPONSE_TYPE_BUFSIZ)) == -1) {
-    werld_client_log(WERLD_CLIENT_ERROR, "+client+handle_response read failed\n");
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "+client+handle_response read failed\n");
     exit(-1);
   }
 
