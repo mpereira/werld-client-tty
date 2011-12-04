@@ -1,11 +1,10 @@
 #include <errno.h>
-#include <malloc.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "message_list.h"
 #include "player_list.h"
 #include "ui.h"
 
@@ -20,16 +19,21 @@ static void player_list_init(struct player_list **player_list) {
   *player_list = NULL;
 }
 
-void player_list_free(struct player_list *player_list) {
+void player_list_free(struct player_list **player_list) {
   struct player_list *tmp;
+  struct player_list *iterator;
 
-  while (player_list) {
-    tmp = player_list;
-    player_free(player_list->player);
-    message_list_free(player_list->message_list);
-    player_list = player_list->next;
+  iterator = *player_list;
+
+  while (iterator) {
+    tmp = iterator;
+    if (iterator->player) player_free(&(iterator->player));
+    message_list_free(&(iterator->message_list));
+    iterator = iterator->next;
     free(tmp);
   }
+
+  *player_list = NULL;
 }
 
 static bool player_list_player_member(const struct player_list *player_list,

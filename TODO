@@ -17,11 +17,7 @@ TODO
 
 * fix broken messages once and for all.
 
-* don't allow players to walk across screen boundaries.
-
 * work with wide characters.
-
-* using the new 'net' module breaks messages. discover why.
 
 * generate data shared between projects (e.g. response types) programatically
   from metadata.
@@ -32,6 +28,11 @@ TODO
 
 * handle socket timeouts gracefully.
 
+* make KEY_RESIZE not be considered input.
+
+* refactor werld_client_log_binary()'s logic to build up its string and depend
+  solely on werld_client_log().
+
 DONE
 * handle disconnect responses (0 bytes) gracefully.
 * send event on disconnect, so that other clients see you disapear.
@@ -41,3 +42,5 @@ DONE
 * make walking and chatting work flawlessly.
 * create status bar.
 * iterate on read()s and write()s and make sure all data is transmitted.
+* using the new 'net' module breaks messages. discover why.
+* don't allow players to walk across screen boundaries.

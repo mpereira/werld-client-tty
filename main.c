@@ -1,22 +1,22 @@
 #include <curses.h>
 #include <errno.h>
-#include <malloc.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
+#include <sys/select.h>
 #include <unistd.h>
 
 #include "client.h"
 #include "keyboard.h"
-#include "message_bar.h"
+#include "main_window.h"
+#include "maps.h"
+#include "message_bar_window.h"
 #include "message_handler.h"
 #include "player.h"
 #include "player_list.h"
-#include "status_bar.h"
+#include "status_bar_window.h"
 #include "tty.h"
+#include "ui.h"
 #include "werld_client.h"
-#include "window.h"
 
 int main(int argc, const char *argv[]) {
   char *account;
@@ -34,31 +34,31 @@ int main(int argc, const char *argv[]) {
     exit(errno);
   }
 
-  /* FIXME: remove stupid warning. */
+  /* FIXME: this removes a stupid warning. */
   (void) argc;
+
+  werld_client_init(&werld_client);
 
   /* FIXME: parse config options from command-line arguments. */
   werld_client.log_level = WERLD_CLIENT_DEBUG;
   werld_client.log_file = NULL;
   werld_client.player_messages_lifetime = 3;
 
-  initscr();
-  cbreak();
-  curs_set(false);
-
   while (!tty_term_size_ok()) {
     clear();
     mvaddstr(1, 1, WERLD_SMALL_TERM_MSG);
     if ((key = getch()) == 'q' || key == 'Q') {
+      free(account);
+      free(password);
       endwin();
       return(0);
     }
     refresh();
   }
 
-  window_new(&(werld_client.window));
-  window_init(werld_client.window);
-  window_get_credentials(werld_client.window, account, password);
+  main_window_new(&(werld_client.main_window));
+  main_window_init(werld_client.main_window);
+  main_window_get_credentials(werld_client.main_window, account, password);
 
   player_malloc(&(werld_client.player));
   player_set(werld_client.player, 0, account, 0, 0);
@@ -66,32 +66,39 @@ int main(int argc, const char *argv[]) {
   free(account);
   free(password);
 
-  if (client_connect(*(werld_client.player)) == -1) {
-    player_free(werld_client.player);
-    window_del(werld_client.window);
-    endwin();
-    werld_client_log(WERLD_CLIENT_INFO,
+  if (client_request_connect(*(werld_client.player)) == -1) {
+    werld_client_kill(&werld_client);
+    werld_client_log(WERLD_CLIENT_ERROR,
                      "%s: failed to connect to the server\n",
                      argv[0]);
     return(-1);
   }
 
   if (client_handle_response() == -1) {
-    client_disconnect(*(werld_client.player));
-    player_free(werld_client.player);
-    window_del(werld_client.window);
-    endwin();
-    werld_client_log(WERLD_CLIENT_INFO,
+    werld_client_kill(&werld_client);
+    werld_client_log(WERLD_CLIENT_ERROR,
                      "%s: connection to the server has been lost\n",
                      argv[0]);
     return(-1);
   }
 
+  if (client_request_map(WERLD_MAPS_WORLD) == -1) {
+    werld_client_kill(&werld_client);
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "%s: failed to connect to the server\n",
+                     argv[0]);
+    return(-1);
+  }
+
+  if (client_handle_response() == -1) {
+    werld_client_kill(&werld_client);
+    werld_client_log(WERLD_CLIENT_ERROR,
+                     "%s: failed to download world map\n",
+                     argv[0]);
+    return(-1);
+  }
+
   if (pipe(werld_client.message_handler_fds) == -1) {
-    client_disconnect(*(werld_client.player));
-    player_free(werld_client.player);
-    window_del(werld_client.window);
-    endwin();
     perror("pipe");
     return(errno);
   }
@@ -101,16 +108,25 @@ int main(int argc, const char *argv[]) {
   werld_client.player_list->message_list = NULL;
   werld_client.player_list->next = NULL;
 
-  message_bar_new(&(werld_client.message_bar));
-  message_bar_init(werld_client.message_bar);
-  status_bar_new(&(werld_client.status_bar));
+  message_bar_window_new(&(werld_client.message_bar_window));
+  message_bar_window_init(werld_client.message_bar_window);
+  status_bar_window_new(&(werld_client.status_bar_window));
 
   if (has_colors()) {
     start_color();
-    init_pair(1, COLOR_WHITE, COLOR_BLUE);
-    wbkgd(werld_client.status_bar, COLOR_PAIR(1));
+    init_pair(BLACK_ON_BLACK, COLOR_BLACK, COLOR_BLACK);
+    init_pair(RED_ON_BLACK, COLOR_RED, COLOR_BLACK);
+    init_pair(GREEN_ON_BLACK, COLOR_GREEN, COLOR_BLACK);
+    init_pair(YELLOW_ON_BLACK, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(BLUE_ON_BLACK, COLOR_BLUE, COLOR_BLACK);
+    init_pair(MAGENTA_ON_BLACK, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(CYAN_ON_BLACK, COLOR_CYAN, COLOR_BLACK);
+    init_pair(WHITE_ON_BLACK, COLOR_WHITE, COLOR_BLACK);
   }
-  status_bar_refresh(werld_client.status_bar, werld_client.player);
+  status_bar_window_refresh(werld_client.status_bar_window,
+                            werld_client.player);
+  ui_draw_map(werld_client.world_map);
+  main_window_refresh(werld_client.main_window);
 
   fd_set master_fds, read_fds;
 
@@ -119,7 +135,7 @@ int main(int argc, const char *argv[]) {
   FD_SET(werld_client.fd, &master_fds);
   FD_SET(werld_client.message_handler_fds[0], &master_fds);
 
-  do {
+  for (;;) {
     read_fds = master_fds;
     timeout.tv_sec = werld_client.player_messages_lifetime;
     timeout.tv_usec = 0;
@@ -133,7 +149,7 @@ int main(int argc, const char *argv[]) {
       continue;
     }
     if (FD_ISSET(fileno(stdin), &read_fds)) {
-      keyboard_event(wgetch(werld_client.window));
+      keyboard_event(wgetch(werld_client.main_window));
     }
     if (FD_ISSET(werld_client.message_handler_fds[0], &read_fds)) {
       if (message_handler_handle_player_message() == -1) {
@@ -142,12 +158,7 @@ int main(int argc, const char *argv[]) {
     }
     if (FD_ISSET(werld_client.fd, &read_fds)) {
       if (client_handle_response() == -1) {
-        client_disconnect(*(werld_client.player));
-        player_list_free(werld_client.player_list);
-        message_bar_del(werld_client.message_bar);
-        status_bar_del(werld_client.status_bar);
-        window_del(werld_client.status_bar);
-        endwin();
+        werld_client_kill(&werld_client);
         werld_client_log(WERLD_CLIENT_INFO,
                          "%s: connection to the server has been lost\n",
                          argv[0]);
@@ -155,7 +166,7 @@ int main(int argc, const char *argv[]) {
       }
     }
     message_handler_sweep_messages();
-  } while (true);
+  }
 
   return(0);
 }

@@ -1,15 +1,15 @@
-#include <curses.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
-#include "message_handler.h"
+#include "main_window.h"
 #include "message_list.h"
 #include "net.h"
-#include "werld_client.h"
 #include "ui.h"
+#include "werld_client.h"
 
 #define WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message_size) \
   (sizeof(size_t) + sizeof(struct player) + message_size)
@@ -27,6 +27,7 @@ int message_handler_handle_player_message(void) {
   if ((bytes_read = net_read(werld_client.message_handler_fds[0],
                              &message_size,
                              sizeof(size_t))) == -1) {
+    werld_client_kill(&werld_client);
     werld_client_log(WERLD_CLIENT_ERROR, "+message_handler+handle_player_message read failed\n");
     exit(-1);
   }
@@ -47,6 +48,7 @@ int message_handler_handle_player_message(void) {
   if ((bytes_read = net_read(werld_client.message_handler_fds[0],
                              data,
                              WERLD_MESSAGE_HANDLER_READ_BUFSIZ(message_size))) == -1) {
+    werld_client_kill(&werld_client);
     werld_client_log(WERLD_CLIENT_ERROR, "+message_handler+handle_player_message read failed\n");
     exit(-1);
   }
@@ -63,9 +65,11 @@ int message_handler_handle_player_message(void) {
   message[message_size] = '\0';
 
   ui_erase_player_message_list(&player);
+  ui_draw_map(werld_client.world_map);
   player_list_add_message(&(werld_client.player_list), message, player.id);
   ui_draw_player_message_list(&player);
-  wrefresh(werld_client.window);
+  ui_draw_player(player);
+  main_window_refresh(werld_client.main_window);
   free(message);
   free(data);
 
@@ -84,13 +88,14 @@ void message_handler_handle_incoming_message(const struct player *player,
     exit(errno);
   }
 
-  void *offset = mempcpy(data, &message_size, sizeof(size_t));
-  offset = mempcpy(offset, player, sizeof(struct player));
-  memcpy(offset, message, message_size);
+  char *offset = memcpy(data, &message_size, sizeof(size_t));
+  offset = memcpy(offset + sizeof(size_t), player, sizeof(struct player));
+  memcpy(offset + sizeof(struct player), message, message_size);
 
   if ((bytes_written = net_write(werld_client.message_handler_fds[1],
                                  data,
                                  WERLD_MESSAGE_HANDLER_WRITE_BUFSIZ(message_size))) == -1) {
+    werld_client_kill(&werld_client);
     werld_client_log(WERLD_CLIENT_ERROR, "+message_handler+handle_incoming_message write failed\n");
     exit(-1);
   }
@@ -119,11 +124,19 @@ void message_handler_sweep_messages(void) {
                          "+message_handler_sweep_messages sweeping %s\n",
                          j->message);
         ui_erase_player_message_list(i->player);
+        ui_draw_map(werld_client.world_map);
         message_list_remove(&(i->message_list), j->message);
         ui_draw_player_list(werld_client.player_list);
         ui_draw_player_message_list(i->player);
-        wrefresh(werld_client.window);
+        main_window_refresh(werld_client.main_window);
       }
     }
+  }
+}
+
+void message_handler_close(int fd) {
+  if (close(fd)) {
+    perror("close");
+    exit(errno);
   }
 }

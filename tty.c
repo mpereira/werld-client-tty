@@ -1,6 +1,5 @@
 #include <curses.h>
 
-#include "tty.h"
 #include "ui.h"
 #include "werld_client.h"
 
