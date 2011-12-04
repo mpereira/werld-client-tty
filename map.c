@@ -5,24 +5,21 @@
 
 #include "map.h"
 
-uint8_t WERLD_MAP_TILE_TYPE_GROUND = 0;
-uint8_t WERLD_MAP_TILE_TYPE_WALL   = 1;
-
 size_t WERLD_MAP_TILES_SIZE(int width, int height) {
-  return(sizeof(uint8_t) * width * height);
+  return(sizeof(struct tile) * width * height);
 }
 
 void map_malloc(struct map **map, int width, int height) {
-  if (!(*map = malloc(sizeof(struct map)))) {
+  if (!(*map = malloc(sizeof(**map)))) {
     perror("malloc");
     exit(errno);
   }
-  if (!((*map)->tiles = malloc(width * sizeof(uint8_t *)))) {
+  if (!((*map)->tiles = malloc(width * sizeof((*(*map)->tiles))))) {
     perror("malloc");
     exit(errno);
   }
   for (int i = 0; i < width; i++) {
-    if (!((*map)->tiles[i] = malloc(height * sizeof(uint8_t)))) {
+    if (!((*map)->tiles[i] = malloc(height * sizeof((**(*map)->tiles))))) {
       perror("malloc");
       exit(errno);
     }

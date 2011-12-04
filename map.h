@@ -4,10 +4,12 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "tile.h"
+
 struct map {
   uint32_t width;
   uint32_t height;
-  uint8_t **tiles;
+  struct tile **tiles;
 };
 
 extern uint8_t WERLD_MAP_TILE_TYPE_GROUND;

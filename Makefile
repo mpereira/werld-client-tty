@@ -21,6 +21,7 @@ SRC_OBJECTS = \
               $(SRC_DIR)/player_list.o        \
               $(SRC_DIR)/request_type.o       \
               $(SRC_DIR)/status_bar_window.o  \
+              $(SRC_DIR)/tile.o               \
               $(SRC_DIR)/tty.o                \
               $(SRC_DIR)/ui.o                 \
               $(SRC_DIR)/werld_client.o       \
