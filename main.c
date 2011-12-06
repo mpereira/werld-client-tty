@@ -153,13 +153,14 @@ int main(int argc, const char *argv[]) {
     }
     if (FD_ISSET(werld_client.message_handler_fds[0], &read_fds)) {
       if (message_handler_handle_player_message() == -1) {
-        /* code */
+        werld_client_log(WERLD_CLIENT_ERROR,
+                         "message_handler_handle_player_message failed\n");
       }
     }
     if (FD_ISSET(werld_client.fd, &read_fds)) {
       if (client_handle_response() == -1) {
         werld_client_kill(&werld_client);
-        werld_client_log(WERLD_CLIENT_INFO,
+        werld_client_log(WERLD_CLIENT_ERROR,
                          "%s: connection to the server has been lost\n",
                          argv[0]);
         return(-1);
