@@ -27,7 +27,7 @@ SRC_OBJECTS = \
               $(SRC_DIR)/werld_client.o       \
 
 ifeq ($(WERLD_ENV), development)
-  CFLAGS += -g -DWERLD_DEVELOPMENT
+  CFLAGS += -O1 -g3 -DWERLD_DEVELOPMENT
 else
   CFLAGS += -O3
 endif
