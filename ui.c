@@ -98,11 +98,11 @@ void ui_erase_player_message_list(const struct player *player) {
 void ui_draw_map(const struct map *map) {
   for (unsigned int i = 0; i < map->width; i++) {
     for (unsigned int j = 0; j < map->height; j++) {
-      if (map->tiles[i][j].type == WERLD_TILE_TYPE_GROUND) {
+      if (map->tiles[i][j].type == WERLD_TILE_TYPE_GRASS) {
         mvwaddch(werld_client.main_window,
                  j,
                  i,
-                 '.' | WERLD_TILE_TYPE_GROUND_COLOR);
+                 '.' | WERLD_TILE_TYPE_GRASS_COLOR);
       } else if (map->tiles[i][j].type == WERLD_TILE_TYPE_WALL) {
         mvwaddch(werld_client.main_window,
                  j,

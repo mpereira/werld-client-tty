@@ -1,6 +1,11 @@
 #include <stdint.h>
 
-uint8_t WERLD_TILE_TYPE_GROUND = 0;
-uint8_t WERLD_TILE_TYPE_WALL   = 1;
+uint8_t WERLD_TILE_TYPE_DIRT  = 0;
+uint8_t WERLD_TILE_TYPE_GRASS = 1;
+uint8_t WERLD_TILE_TYPE_SAND  = 2;
+uint8_t WERLD_TILE_TYPE_SNOW  = 3;
+uint8_t WERLD_TILE_TYPE_WATER = 4;
+uint8_t WERLD_TILE_TYPE_STONE = 4;
+uint8_t WERLD_TILE_TYPE_WALL  = 6;
 
 unsigned short int WERLD_TILE_PROPERTY_TRAVERSABLE = 1;
