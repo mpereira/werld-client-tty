@@ -8,6 +8,7 @@ extern const int WERLD_PASSWORD_MAX_SIZE;
 
 void main_window_new(WINDOW **);
 void main_window_init(WINDOW *);
+void main_window_draw_login_screen(WINDOW *);
 void main_window_get_credentials(WINDOW *, char *, char *);
 void main_window_del(WINDOW *);
 void main_window_refresh(WINDOW *);
