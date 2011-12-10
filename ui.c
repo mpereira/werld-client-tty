@@ -8,6 +8,26 @@
 #include "ui.h"
 #include "werld_client.h"
 
+char WERLD_TILE_TYPE_CHARACTER[] = {
+  '.',  /* WERLD_TILE_TYPE_DIRT  */
+  '.',  /* WERLD_TILE_TYPE_GRASS */
+  '.',  /* WERLD_TILE_TYPE_SAND  */
+  '.',  /* WERLD_TILE_TYPE_SNOW  */
+  '.',  /* WERLD_TILE_TYPE_WATER */
+  '.',  /* WERLD_TILE_TYPE_STONE */
+  '#'   /* WERLD_TILE_TYPE_WALL  */
+};
+
+int WERLD_TILE_TYPE_COLOR[] = {
+  WERLD_TILE_TYPE_DIRT_COLOR,
+  WERLD_TILE_TYPE_GRASS_COLOR,
+  WERLD_TILE_TYPE_SAND_COLOR,
+  WERLD_TILE_TYPE_SNOW_COLOR,
+  WERLD_TILE_TYPE_WATER_COLOR,
+  WERLD_TILE_TYPE_STONE_COLOR,
+  WERLD_TILE_TYPE_WALL_COLOR
+};
+
 void ui_draw_player(struct player player) {
   wmove(werld_client.main_window, player.y - 1, (player.x - strlen(player.name) / 2) -1);
   waddch(werld_client.main_window, '(' | COLOR_PAIR(BLACK_ON_BLACK) | A_BOLD);
@@ -98,17 +118,11 @@ void ui_erase_player_message_list(const struct player *player) {
 void ui_draw_map(const struct map *map) {
   for (unsigned int i = 0; i < map->width; i++) {
     for (unsigned int j = 0; j < map->height; j++) {
-      if (map->tiles[i][j].type == WERLD_TILE_TYPE_GRASS) {
-        mvwaddch(werld_client.main_window,
-                 j,
-                 i,
-                 '.' | WERLD_TILE_TYPE_GRASS_COLOR);
-      } else if (map->tiles[i][j].type == WERLD_TILE_TYPE_WALL) {
-        mvwaddch(werld_client.main_window,
-                 j,
-                 i,
-                 '#' | WERLD_TILE_TYPE_WALL_COLOR);
-      }
+      mvwaddch(werld_client.main_window,
+               j,
+               i,
+               WERLD_TILE_TYPE_CHARACTER[map->tiles[i][j].type] |
+                 WERLD_TILE_TYPE_COLOR[map->tiles[i][j].type]);
     }
   }
 }
