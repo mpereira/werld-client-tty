@@ -2,7 +2,7 @@ CC      = gcc
 CFLAGS  = -Wall -Wextra -pedantic -std=c99 -D_GNU_SOURCE
 LDFLAGS = -lncurses
 
-EXECUTABLE  = werld_client
+EXECUTABLE  = werld
 SRC_DIR     = .
 SRC         = $(SRC_DIR)/main.c
 SRC_OBJECTS = \
@@ -26,16 +26,24 @@ SRC_OBJECTS = \
               $(SRC_DIR)/ui.o                 \
               $(SRC_DIR)/werld_client.o       \
 
+PREFIX  = /usr/local
+BIN_DIR = $(PREFIX)/bin
+INSTALL = cp -p
+
 ifeq ($(WERLD_ENV), development)
   CFLAGS += -O1 -g3 -DWERLD_DEVELOPMENT
 else
   CFLAGS += -O3
 endif
 
-all: werld_client
+all: $(EXECUTABLE)
 
-werld_client: $(SRC_OBJECTS)
+werld: $(SRC_OBJECTS)
 	$(CC) $(CFLAGS) $(SRC) -o $(EXECUTABLE) $(SRC_OBJECTS) $(LDFLAGS)
+
+install: all
+	mkdir -p $(BIN_DIR)
+	$(INSTALL) $(EXECUTABLE) $(BIN_DIR)
 
 dep:
 	$(CC) -MM $(SRC_DIR)/*.c
