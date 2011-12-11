@@ -13,7 +13,7 @@ char WERLD_TILE_TYPE_CHARACTER[] = {
   '.',  /* WERLD_TILE_TYPE_GRASS */
   '.',  /* WERLD_TILE_TYPE_SAND  */
   '.',  /* WERLD_TILE_TYPE_SNOW  */
-  '.',  /* WERLD_TILE_TYPE_WATER */
+  '~',  /* WERLD_TILE_TYPE_WATER */
   '.',  /* WERLD_TILE_TYPE_STONE */
   '#'   /* WERLD_TILE_TYPE_WALL  */
 };
