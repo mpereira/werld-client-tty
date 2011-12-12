@@ -97,9 +97,12 @@ int client_request_connect(struct player player) {
     }
 
     if (connect(werld_client.fd,
-        iterator->ai_addr,
-        iterator->ai_addrlen) == -1) {
-      close(werld_client.fd);
+                iterator->ai_addr,
+                iterator->ai_addrlen) == -1) {
+      werld_client_log(WERLD_CLIENT_INFO, "connect: %s\n", strerror(errno));
+      if (close(werld_client.fd) == -1) {
+        werld_client_log(WERLD_CLIENT_INFO, "close: %s\n", strerror(errno));
+      }
       continue;
     }
 
@@ -137,8 +140,7 @@ int client_request_connect(struct player player) {
 
 int client_disconnect(void) {
   if (close(werld_client.fd)) {
-    perror("close");
-    exit(errno);
+    werld_client_log(WERLD_CLIENT_ERROR, "close: %s\n", strerror(errno));
   }
 
   werld_client_log(WERLD_CLIENT_DEBUG, "+client+disconnect\n");

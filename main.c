@@ -25,11 +25,13 @@ int main(int argc, const char *argv[]) {
   struct timeval timeout;
 
   if (!(account = malloc(WERLD_ACCOUNT_MAX_SIZE))) {
+    werld_client_kill(&werld_client);
     perror("malloc");
     exit(errno);
   }
 
   if (!(password = malloc(WERLD_PASSWORD_MAX_SIZE))) {
+    werld_client_kill(&werld_client);
     perror("malloc");
     exit(errno);
   }
@@ -40,8 +42,12 @@ int main(int argc, const char *argv[]) {
   werld_client_init(&werld_client);
 
   /* FIXME: parse config options from command-line arguments. */
+#ifdef WERLD_DEVELOPMENT
   werld_client.log_level = WERLD_CLIENT_DEBUG;
   werld_client.log_file = NULL;
+#else
+  werld_client.log_level = WERLD_CLIENT_ERROR;
+#endif
   werld_client.player_messages_lifetime = 3;
 
   if (has_colors()) {
@@ -112,6 +118,7 @@ int main(int argc, const char *argv[]) {
   }
 
   if (pipe(werld_client.message_handler_fds) == -1) {
+    werld_client_kill(&werld_client);
     perror("pipe");
     return(errno);
   }
