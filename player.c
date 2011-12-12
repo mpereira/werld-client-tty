@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -51,6 +52,8 @@ static bool player_can_traverse(struct player *player, enum movement movement) {
   case RIGHT:
     tile = werld_client.world_map->tiles[player->x + 1][player->y];
     break;
+  default:
+    assert(false && "invalid movement");
   }
 
   return(tile.properties & WERLD_TILE_PROPERTY_TRAVERSABLE);
